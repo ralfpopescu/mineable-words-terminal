@@ -1,14 +1,16 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import mineWord from './mine-word'
+import { Terminal } from './components/Terminal'
+import { TerminalContextProvider } from "react-terminal";
 
 function App() {
   return (
+    <TerminalContextProvider>
     <div className="App">
-      hi
-      {mineWord()}
+      <Terminal />
     </div>
+    </TerminalContextProvider>
   );
 }
 
