@@ -55,6 +55,16 @@ const  getWordLengthFromHash = (wordHash: BigNumber) => {
 
 export type FoundWord = { word: string, i: BigNumber, isValid: boolean }
 
+export const getWordFromHash = (nonce: BigNumber, _address: BigNumber,) => {
+  const address = BigNumber.from(_address._hex);
+  const attempt = hash(address, nonce);
+  const numberOfLetters = getWordLengthFromHash(attempt)
+
+  return new Array(numberOfLetters).fill(null)
+  .map((_, i) => getLetterFromHash(attempt, i))
+  .reverse().join('')
+}
+
 export function mine(
     _rangeStart: BigNumber,
     _rangeEnd: BigNumber,
@@ -65,12 +75,7 @@ export function mine(
     const address = BigNumber.from(_address._hex);
   
     for (let i = rangeStart; i.lt(rangeEnd); i = i.add(1)) {
-      const attempt = hash(address, i);
-      const numberOfLetters = getWordLengthFromHash(attempt)
-
-      const word = new Array(numberOfLetters).fill(null)
-      .map((_, i) => getLetterFromHash(attempt, i))
-      .reverse().join('')
+      const word = getWordFromHash(address, i)
 
       if(wordExists[word] && word.length > 5) {
         return { word, i, isValid: true }

@@ -1,12 +1,12 @@
 import { ReactTerminal } from "react-terminal";
 import { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { FoundWord } from '../miner/mine'
+import { FoundWord, getWordFromHash } from '../miner/mine'
 import { BigNumber } from "@ethersproject/bignumber";
 import { createWorkerFactory } from '@shopify/web-worker';
 import ReactInterval from 'react-interval';
-import { useWorker } from "@koale/useworker";
-import { mine } from '../miner/mine'
+import { FAQ } from './FAQ'
+import { RecentlyMinedWords } from './RecentlyMinedWords'
 
 const createWorker = createWorkerFactory(() => import("../miner/mine"));
 
@@ -23,20 +23,24 @@ const options = () =>
 <span>4. Calculate expected time to mine</span>
 </Column>
 
-type FoundWordsProps = { foundWords: FoundWord[], addFoundWord: (word: FoundWord) => void }
-
 const setSize = 10000000
 
 const worker = createWorker();
 
-const FoundWords = () => {
+const WordAndNonce = ({ word, nonce }: { word: string, nonce: BigNumber }) => <div>{word} --- nonce: {nonce._hex}</div>
+
+type FoundWordsProps = { initialOffset?: number }
+
+const address = BigNumber.from(123);
+
+const FoundWords = ({ initialOffset } : FoundWordsProps) => {
     const [foundWords, setFoundWords] = useState<FoundWord[]>([]);
     const [offset, setOffset] = useState<BigNumber>(BigNumber.from(0))
     const [ellipses, setEllipses] = useState(1);
 
     useEffect(() => {
         (async () => {
-        const foundWord = await worker.mine(BigNumber.from(offset), BigNumber.from(offset.add(setSize)), BigNumber.from(123));
+        const foundWord = await worker.mine(BigNumber.from(offset), BigNumber.from(offset.add(setSize)), address);
         console.log(foundWord)
         //@ts-ignore
         setOffset(foundWord ? BigNumber.from(foundWord.i).add(1) : offset.add(setSize))
@@ -45,7 +49,7 @@ const FoundWords = () => {
         setFoundWords(fw => [...fw, foundWord]);
         }
         })();
-    }, [worker, setFoundWords]);
+    }, [worker, setFoundWords, offset]);
 
     return <Column>
     <ReactInterval timeout={500} enabled={true}
@@ -54,36 +58,72 @@ const FoundWords = () => {
               else setEllipses(e => e + 1);
           }} />
     Mining mwords{'.'.repeat(ellipses)}
-    <div>{offset.toNumber()}</div>
-    <div>{JSON.stringify(foundWords)}</div>
+    <div>{foundWords.map(fw => <WordAndNonce word={fw.word} nonce={fw.i} />)}</div>
     </Column>
 }
 
+const splitOnSpaces = (input: string) => input.split(/\s+/);
 
 const welcomeMessage = `Welcome to MineableWords (MWORDS). Enter "options" to get started.
 `
 
 export const Terminal = () => {
+    const [stagedNonce, setStagedNonce] = useState<BigNumber | null>()
+
   const commands = {
     options,
-    "1": () => {
-        return <FoundWords />
-    },
+    "1": () => `To start mining mwords, use command "mine X", where X is the number you want to start.`,
+    "2": () => <FAQ />,
+    "3": () => <RecentlyMinedWords />,
     "4": `Use command "calculate-mining-time X Y", where X is your hash-rate in MH/s and Y is the length of the word you are looking for.`,
     "calculate-mining-time": (input: string) => {
-        const numbers = input.split(/\s+/);
+        const options = splitOnSpaces(input);
 
-        if(numbers.length !== 2) return "Must enter exactly 2 integers."
+        if(options.length !== 2) return "Must enter exactly 2 integers."
 
-        const hashRate = parseInt(numbers[0])
-        const lengthOfWord = parseInt(numbers[1])
+        const hashRate = parseInt(options[0])
+        const lengthOfWord = parseInt(options[1])
 
         if(!hashRate || !lengthOfWord || hashRate < 0 || lengthOfWord < 0) return "Must enter valid, positive, non-zero integers."
         const numberOfSeconds = (27 ^ lengthOfWord)/ hashRate * 1000000
         return `It would take you ${numberOfSeconds / 60 / 60} hours to mine a word of length ${lengthOfWord}.`
     },
-    whoami: "jackharper",
-    cd: (directory: string) => `changed path to ${directory}`
+    link: "Linking your wallet...",
+    mine: (input: string) => {
+        const options = splitOnSpaces(input);
+        const offset = parseInt(options[0])
+
+        return <FoundWords initialOffset={offset || 0} />
+    },
+    mint: (input: string) => {
+        const options = splitOnSpaces(input);
+        console.log({ options })
+
+        if(options.length !== 1) return "Must enter a single nonce."
+
+        const stringNonce = options[0]
+
+        try {
+            const nonce = BigNumber.from(stringNonce)
+            const word = getWordFromHash(nonce, address)
+            setStagedNonce(nonce);
+            return `This nonce will mint the word "${word}". Do you want to proceed? y/n`
+        } catch (e) {
+            return `Invalid nonce.`
+        }
+        
+    },
+    y: () => {
+        if(stagedNonce) {
+            const word = getWordFromHash(stagedNonce, address)
+            return `Minting ${word}...`
+        }
+    },
+    n: () => {
+        if(stagedNonce) {
+            setStagedNonce(null)
+        }
+    },
   };
 
   return (
