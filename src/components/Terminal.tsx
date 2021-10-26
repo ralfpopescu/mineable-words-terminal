@@ -3,7 +3,8 @@ import { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { FoundWord } from '../miner/mine'
 import { BigNumber } from "@ethersproject/bignumber";
-import { createWorkerFactory, useWorker } from '@shopify/react-web-worker';
+import { createWorkerFactory } from '@shopify/web-worker';
+import ReactInterval from 'react-interval';
 
 const createWorker = createWorkerFactory(() => import("../miner/mine"));
 
@@ -22,20 +23,34 @@ const options = () =>
 
 type FoundWordsProps = { foundWords: FoundWord[], addFoundWord: (word: FoundWord) => void }
 
+const setSize = 1000000
+
+const worker = createWorker();
+
 const FoundWords = () => {
-    const worker = useWorker(createWorker);
     const [foundWords, setFoundWords] = useState<FoundWord[]>([]);
+    const [offset, setOffset] = useState<BigNumber>(BigNumber.from(0))
+    const [ellipses, setEllipses] = useState(1);
 
     useEffect(() => {
         (async () => {
-        const foundWord = await worker.mine(BigNumber.from(0), BigNumber.from(111110), BigNumber.from(123));
+        const foundWord = await worker.mine(BigNumber.from(offset), BigNumber.from(offset.add(setSize)), BigNumber.from(123));
+        console.log(foundWord.word)
+        //@ts-ignore
+        setOffset(foundWord.i.add(1))
         //@ts-ignore
         setFoundWords(fw => [...fw, foundWord]);
         })();
-    }, [worker]);
+    }, [worker, setFoundWords]);
 
     return <Column>
-    Mining mwords...
+    <ReactInterval timeout={500} enabled={true}
+          callback={() => {
+              if(ellipses > 2) setEllipses(0)
+              else setEllipses(e => e + 1);
+          }} />
+    Mining mwords{'.'.repeat(ellipses)}
+    <div>{offset.toNumber()}</div>
     <div>{JSON.stringify(foundWords)}</div>
     </Column>
 }
