@@ -5,7 +5,7 @@ const Container = styled.div`
 
 const words = ['very cool', 'awesome', 'mwords']
 
-export const RecentlyMinedWords = () => (
+export const RecentlyMined = () => (
     <Container>
     {words.join(', ')}
     </Container>
