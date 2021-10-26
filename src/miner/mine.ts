@@ -53,7 +53,7 @@ const  getWordLengthFromHash = (wordHash: BigNumber) => {
   return 15;
 }
 
-export type FoundWord = { word: string, i: BigNumber }
+export type FoundWord = { word: string, i: BigNumber, isValid: boolean }
 
 export function mine(
     _rangeStart: BigNumber,
@@ -73,8 +73,8 @@ export function mine(
       .reverse().join('')
 
       if(wordExists[word] && word.length > 5) {
-        return { word, i }
+        return { word, i, isValid: true }
       };
     }
-    return { word: '', i : BigNumber.from(0) }
+    return { word: '', i : BigNumber.from(0), isValid: false }
   }

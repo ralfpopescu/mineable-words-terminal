@@ -5,6 +5,8 @@ import { FoundWord } from '../miner/mine'
 import { BigNumber } from "@ethersproject/bignumber";
 import { createWorkerFactory } from '@shopify/web-worker';
 import ReactInterval from 'react-interval';
+import { useWorker } from "@koale/useworker";
+import { mine } from '../miner/mine'
 
 const createWorker = createWorkerFactory(() => import("../miner/mine"));
 
@@ -23,7 +25,7 @@ const options = () =>
 
 type FoundWordsProps = { foundWords: FoundWord[], addFoundWord: (word: FoundWord) => void }
 
-const setSize = 1000000
+const setSize = 10000000
 
 const worker = createWorker();
 
@@ -35,11 +37,13 @@ const FoundWords = () => {
     useEffect(() => {
         (async () => {
         const foundWord = await worker.mine(BigNumber.from(offset), BigNumber.from(offset.add(setSize)), BigNumber.from(123));
-        console.log(foundWord.word)
+        console.log(foundWord)
         //@ts-ignore
-        setOffset(foundWord.i.add(1))
+        setOffset(foundWord ? BigNumber.from(foundWord.i).add(1) : offset.add(setSize))
+        if(foundWord.isValid) {
         //@ts-ignore
         setFoundWords(fw => [...fw, foundWord]);
+        }
         })();
     }, [worker, setFoundWords]);
 
