@@ -7,7 +7,6 @@ import { createWorkerFactory } from '@shopify/web-worker';
 import ReactInterval from 'react-interval';
 import { FAQ } from './FAQ'
 import { RecentlyMinedWords } from './RecentlyMinedWords'
-import { DiscordIcon } from './DiscordIcon'
 
 const createWorker = createWorkerFactory(() => import("../miner/mine"));
 
