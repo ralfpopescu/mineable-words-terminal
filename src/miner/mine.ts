@@ -1,6 +1,5 @@
 import { solidityKeccak256 } from "ethers/lib/utils";
 import { BigNumber } from "@ethersproject/bignumber";
-import wordExists from './word-exists'
 
 export const getLetterFromNumber = (roll: number) => {
   const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 
@@ -69,6 +68,7 @@ export function mine(
     _rangeStart: BigNumber,
     _rangeEnd: BigNumber,
     _address: BigNumber,
+    wordExists: { [key:string]: boolean }
   ): FoundWord {
     const rangeStart = BigNumber.from(_rangeStart._hex);
     const rangeEnd = BigNumber.from(_rangeEnd._hex);

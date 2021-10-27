@@ -364,19 +364,6 @@ module.exports = function (webpackEnv) {
       strictExportPresence: true,
       rules: [
         {
-          test: /\.js/,
-          exclude: /node_modules/,
-          use: [
-            {
-              loader: 'babel-loader',
-              options: {
-                babelrc: false,
-                plugins: [require.resolve('@shopify/web-worker/babel')],
-              },
-            },
-          ],
-        },
-        {
           test: /\.mjs$/,
           include: /node_modules/,
           type: "javascript/auto",
@@ -453,6 +440,7 @@ module.exports = function (webpackEnv) {
                 // See #6846 for context on why cacheCompression is disabled
                 cacheCompression: false,
                 compact: isEnvProduction,
+                babelrc: false,
               },
             },
             // Process any JS outside of the app with Babel.

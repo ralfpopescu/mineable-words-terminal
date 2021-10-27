@@ -4,6 +4,7 @@ import ReactInterval from 'react-interval';
 import { createWorkerFactory } from '@shopify/web-worker';
 import { FoundWord } from '../../../../miner/mine'
 import { BigNumber } from "@ethersproject/bignumber";
+import { getExistingWords } from '../../../../miner/word-exists'
 
 const createWorker = createWorkerFactory(() => import("../../../../miner/mine"));
 
@@ -24,19 +25,29 @@ export const FoundWords = ({ initialOffset, address } : FoundWordsProps) => {
     const [foundWords, setFoundWords] = useState<FoundWord[]>([]);
     const [offset, setOffset] = useState<BigNumber>(BigNumber.from(initialOffset))
     const [ellipses, setEllipses] = useState(1);
+    const [wordExists, setWordExists] = useState<{ [key: string]: boolean } | null>(null)
 
     useEffect(() => {
         (async () => {
-        const foundWord = await worker.mine(BigNumber.from(offset), BigNumber.from(offset.add(setSize)), address);
-        console.log(foundWord)
-        //@ts-ignore
-        setOffset(foundWord ? BigNumber.from(foundWord.i).add(1) : offset.add(setSize))
-        if(foundWord.isValid) {
-        //@ts-ignore
-        setFoundWords(fw => [...fw, foundWord]);
-        }
+            const data = await getExistingWords();
+            setWordExists(data);
+            })();
+    })
+
+    useEffect(() => {
+        (async () => {
+            if(wordExists) {
+                const foundWord = await worker.mine(BigNumber.from(offset), BigNumber.from(offset.add(setSize)), address, wordExists);
+                console.log(foundWord)
+                //@ts-ignore
+                setOffset(foundWord ? BigNumber.from(foundWord.i).add(1) : offset.add(setSize))
+                if(foundWord.isValid) {
+                //@ts-ignore
+                setFoundWords(fw => [...fw, foundWord]);
+                }
+            }
         })();
-    }, [worker, setFoundWords, offset]);
+    }, [worker, setFoundWords, offset, wordExists]);
 
     return (
     <Column>
