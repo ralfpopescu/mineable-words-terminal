@@ -1,6 +1,7 @@
 import { FAQ } from './Views/FAQ'
 import { RecentlyMined } from './Views/RecentlyMined'
 import { FoundWords } from './Views/FoundWords'
+import { Links } from './Views/Links'
 import { BigNumber } from "@ethersproject/bignumber";
 import { getWordFromHash } from '../../miner/mine'
 
@@ -29,7 +30,8 @@ export const commands = ({ stagedNonce, setStagedNonce }: CommandsInput) => ({
     "2": () => <FAQ />,
     "3": () => <RecentlyMined />,
     "4": `Use command "calculate-mining-time X Y", where X is your hash-rate in MH/s and Y is the length of the word you are looking for.`,
-    "5": () => 'hi',
+    "5": 'To mint a word you found, use command "mint X", where X is the nonce for that word (ex. "0x2ea93")',
+    "6": () => <Links />,
     "calculate-mining-time": (input: string) => {
         const options = splitOnSpaces(input);
 
