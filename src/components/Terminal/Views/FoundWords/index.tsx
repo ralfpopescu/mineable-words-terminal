@@ -47,7 +47,7 @@ export const FoundWords = ({ initialOffset, address } : FoundWordsProps) => {
                 }
             }
         })();
-    }, [worker, setFoundWords, offset, wordExists, address]);
+    }, [setFoundWords, offset, wordExists, address]);
 
     return (
     <Column>
