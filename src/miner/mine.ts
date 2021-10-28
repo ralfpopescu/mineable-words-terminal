@@ -1,5 +1,25 @@
 import { solidityKeccak256 } from "ethers/lib/utils";
 import { BigNumber } from "@ethersproject/bignumber";
+import axios from 'axios'
+
+let cachedData: any;
+
+export const getExistingWords = async (): Promise<{ [key: string]: boolean }> => {
+  console.log('FETCHING')
+  if(cachedData) {
+    console.log('cache hit')
+    return cachedData;
+  }
+    const data = await axios.get(
+        'https://api.achievemints.io/existing-words',
+         { headers: {
+             "Access-Control-Allow-Origin": "*",
+             'Content-Type': 'application/json',
+            }}
+        )
+    cachedData = data.data;
+    return data.data;
+}
 
 export const getLetterFromNumber = (roll: number) => {
   const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 
@@ -64,20 +84,22 @@ export const getWordFromHash = (nonce: BigNumber, _address: BigNumber,) => {
   .reverse().join('')
 }
 
-export function mine(
+export async function mine(
     _rangeStart: BigNumber,
     _rangeEnd: BigNumber,
     _address: BigNumber,
-    wordExists: { [key:string]: boolean }
-  ): FoundWord {
+  ): Promise<FoundWord> {
     const rangeStart = BigNumber.from(_rangeStart._hex);
     const rangeEnd = BigNumber.from(_rangeEnd._hex);
     const address = BigNumber.from(_address._hex);
+    const existingWords = await getExistingWords();
   
     for (let i = rangeStart; i.lt(rangeEnd); i = i.add(1)) {
       const word = getWordFromHash(address, i)
 
-      if(wordExists[word] && word.length > 5) {
+      const wordExists = existingWords[word];
+
+      if(wordExists && word.length > 5) {
         return { word, i, isValid: true }
       };
     }
