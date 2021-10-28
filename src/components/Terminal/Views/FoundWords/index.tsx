@@ -29,14 +29,19 @@ export const FoundWords = ({ initialOffset, address } : FoundWordsProps) => {
 
     useEffect(() => {
         (async () => {
-            const data = await getExistingWords();
-            setWordExists(data);
+            if(!wordExists) {
+                console.log('Fetching existing words...')
+                const data = await getExistingWords();
+                console.log('Got existing words.')
+                setWordExists(data);
+            }
             })();
-    })
+    }, [wordExists])
 
     useEffect(() => {
         (async () => {
             if(wordExists) {
+                console.log('Starting miner.')
                 const foundWord = await worker.mine(BigNumber.from(offset), BigNumber.from(offset.add(setSize)), address, wordExists);
                 console.log(foundWord)
                 //@ts-ignore

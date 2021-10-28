@@ -6,6 +6,7 @@
     "@babel/core": "7.12.3",
     "@koale/useworker": "^4.0.2",
     "@pmmmwh/react-refresh-webpack-plugin": "0.4.3",
+    "@rehooks/local-storage": "^2.4.3",
     "@shopify/react-web-worker": "^2.1.7",
     "@shopify/web-worker": "^2.1.5",
     "@svgr/webpack": "5.5.0",
