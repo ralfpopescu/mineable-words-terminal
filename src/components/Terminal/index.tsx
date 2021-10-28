@@ -4,7 +4,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 import { commands } from './commands'
 
 
-const welcomeMessage = `Welcome to MineableWords (MWORDS). Enter "options" to get started.
+const welcomeMessage = `Welcome to MineableWords (MWORDS). Enter "help" to get started.
 `
 
 export const Terminal = () => {
