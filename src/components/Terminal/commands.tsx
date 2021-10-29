@@ -1,6 +1,6 @@
 import { FAQ } from './Views/FAQ'
 import { RecentlyMined } from './Views/RecentlyMined'
-import { FoundWords } from './Views/FoundWords'
+import { Mine } from './Views/Mine'
 import { Help } from './Views/Help'
 import { Links } from './Views/Links'
 import { Calculations } from './Views/Calculations'
@@ -87,6 +87,9 @@ export const commands = ({ stagedNonce, setStagedNonce }: CommandsInput) => ({
 
         const randomNonce = options.r ? BigNumber.from(randomBytes(32)) : undefined;
         const specifiedNonce = options.n? BigNumber.from(options.n) : undefined;
+
+        if(options.n && !specifiedNonce) return "Must specify a valid, positive number if passing a starting nonce."
+
         const wordOptions = options.w;
         let words;
 
@@ -98,9 +101,10 @@ export const commands = ({ stagedNonce, setStagedNonce }: CommandsInput) => ({
 
         if(randomNonce && specifiedNonce) return "Cannot both specify a specific starting nonce and randomize nonce."
 
+        console.log({ randomNonce, specifiedNonce })
         const startingNonce = randomNonce || specifiedNonce;
 
-        return <FoundWords initialOffset={startingNonce} address={address} lookingFor={words} />
+        return <Mine initialOffset={startingNonce || BigNumber.from(0)} address={address} lookingFor={words} />
     },
     mint: (input: string) => {
         const options = splitOnSpaces(input);

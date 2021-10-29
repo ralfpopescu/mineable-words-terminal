@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react'
 import styled from 'styled-components';
 import ReactInterval from 'react-interval';
 import { createWorkerFactory } from '@shopify/web-worker';
+
 import { FoundWord } from '../../../../miner/mine'
 import { BigNumber } from "@ethersproject/bignumber";
+
 
 const createWorker = createWorkerFactory(() => import("../../../../miner/mine"));
 
@@ -21,10 +23,26 @@ const setSize = 10000000
 
 const WordAndNonce = ({ word, nonce }: { word: string, nonce: BigNumber }) => <div>{word} --- nonce: {nonce._hex}</div>
 
-export const FoundWords = ({ initialOffset, address } : FoundWordsProps) => {
+const flatten = (arr: FoundWord[]) => arr.reduce((acc, curr) => ({ ...acc, [curr.word]: curr.i._hex }), {})
+
+export const Mine = ({ initialOffset, address, lookingFor } : FoundWordsProps) => {
     const [foundWords, setFoundWords] = useState<FoundWord[]>([]);
     const [offset, setOffset] = useState<BigNumber>(BigNumber.from(initialOffset))
     const [ellipses, setEllipses] = useState(1);
+    const lookingForMap = lookingFor?.reduce((acc, curr) => ({ ...acc, [curr]: true }), {})
+    const foundStorage = localStorage.getItem('found');
+
+    useEffect(() => {
+        if(!foundStorage) {
+            localStorage.setItem('found', JSON.stringify(flatten(foundWords)))
+        } else {
+            const parsed = JSON.parse(foundStorage)
+            console.log({ parsed })
+
+            localStorage.setItem('found', JSON.stringify({ ...parsed, ...flatten(foundWords)}))
+        }
+    })
+
 
     useEffect(() => {
         (async () => {
@@ -33,6 +51,7 @@ export const FoundWords = ({ initialOffset, address } : FoundWordsProps) => {
                 BigNumber.from(offset), 
                 BigNumber.from(offset.add(setSize)), 
                 address, 
+                lookingForMap,
                 );
             console.log(foundWord)
             //@ts-ignore
@@ -42,7 +61,7 @@ export const FoundWords = ({ initialOffset, address } : FoundWordsProps) => {
             setFoundWords(fw => [...fw, foundWord]);
             }
         })();
-    }, [setFoundWords, offset, address]);
+    }, [setFoundWords, offset, address, lookingForMap]);
 
     return (
     <Column>

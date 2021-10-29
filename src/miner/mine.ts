@@ -3,8 +3,9 @@ import { BigNumber } from "@ethersproject/bignumber";
 import axios from 'axios'
 
 let cachedData: any;
+type Obj = { [key: string]: boolean }
 
-export const getExistingWords = async (): Promise<{ [key: string]: boolean }> => {
+export const getExistingWords = async (): Promise<Obj> => {
   console.log('FETCHING')
   if(cachedData) {
     console.log('cache hit')
@@ -88,11 +89,12 @@ export async function mine(
     _rangeStart: BigNumber,
     _rangeEnd: BigNumber,
     _address: BigNumber,
+    lookingFor?: Obj,
   ): Promise<FoundWord> {
     const rangeStart = BigNumber.from(_rangeStart._hex);
     const rangeEnd = BigNumber.from(_rangeEnd._hex);
     const address = BigNumber.from(_address._hex);
-    const existingWords = await getExistingWords();
+    const existingWords = lookingFor ? lookingFor : await getExistingWords();
   
     for (let i = rangeStart; i.lt(rangeEnd); i = i.add(1)) {
       const word = getWordFromHash(address, i)
