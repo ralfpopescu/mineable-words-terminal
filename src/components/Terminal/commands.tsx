@@ -4,6 +4,7 @@ import { Mine } from './Views/Mine'
 import { Help } from './Views/Help'
 import { Links } from './Views/Links'
 import { Calculations } from './Views/Calculations'
+import { FoundWords } from './Views/FoundWords'
 import { BigNumber } from "@ethersproject/bignumber";
 import { randomBytes } from "@ethersproject/random";
 import { getWordFromHash } from '../../miner/mine'
@@ -123,6 +124,7 @@ export const commands = ({ stagedNonce, setStagedNonce }: CommandsInput) => ({
         }
         
     },
+    found: () => <FoundWords />,
     "safe-mint": "Safe minting...",
     "bounty-claim": (input: string) => {
         const options = splitOnSpaces(input);
