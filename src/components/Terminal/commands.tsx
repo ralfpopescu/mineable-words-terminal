@@ -104,7 +104,6 @@ export const commands = ({ stagedNonce, setStagedNonce }: CommandsInput) => ({
     },
     mint: (input: string) => {
         const options = splitOnSpaces(input);
-        console.log({ options })
 
         if(options.length !== 1) return "Must enter a single nonce."
 
@@ -121,6 +120,36 @@ export const commands = ({ stagedNonce, setStagedNonce }: CommandsInput) => ({
         
     },
     "safe-mint": "Safe minting...",
+    "bounty-claim": (input: string) => {
+        const options = splitOnSpaces(input);
+
+        if(options.length !== 2) return "Must enter a word that has a bounty and a nonce to submit."
+
+        const word = options[0];
+        const nonceOption = options[1];
+
+        const nonce = BigNumber.from(nonceOption)
+        if(!nonce) return "Must enter a valid nonce."
+
+        const decodedWord = getWordFromHash(nonce, address)
+
+        if(decodedWord !== word) return "This nonce does not generate the word you are trying to claim."
+
+        return `This process takes two transactions to ensure no one can snipe your bounty. Proceed? y/n`
+    },
+    "bounty-offer": (input: string) => {
+        const options = splitOnSpaces(input);
+
+        if(options.length !== 2) return "Must enter a desired word and an offer in eth."
+
+        const word = options[0];
+        const offer = options[1];
+
+        const parsedOffer = parseFloat(offer);
+        if(!parsedOffer) return "Must offer a valid, positive amount of eth."
+
+        return `Do you want to offer ${offer} eth for the word ${word}? y/n`
+    },
     y: () => {
         if(stagedNonce) {
             const word = getWordFromHash(stagedNonce, address)
