@@ -7,7 +7,7 @@ import { BigNumber } from "@ethersproject/bignumber";
 
 const createWorker = createWorkerFactory(() => import("../../../../miner/mine"));
 
-type FoundWordsProps = { initialOffset?: number, address: BigNumber }
+type FoundWordsProps = { initialOffset?: BigNumber, address: BigNumber, lookingFor?: string[] }
 
 const worker = createWorker();
 

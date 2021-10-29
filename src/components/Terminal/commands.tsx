@@ -3,9 +3,11 @@ import { RecentlyMined } from './Views/RecentlyMined'
 import { FoundWords } from './Views/FoundWords'
 import { Help } from './Views/Help'
 import { Links } from './Views/Links'
+import { Calculations } from './Views/Calculations'
 import { BigNumber } from "@ethersproject/bignumber";
+import { randomBytes } from "@ethersproject/random";
 import { getWordFromHash } from '../../miner/mine'
-
+import { assertValidOptions, getOptions } from '../../utils'
 
 const splitOnSpaces = (input: string) => input.split(/\s+/);
 
@@ -16,29 +18,89 @@ type CommandsInput = {
     setStagedNonce: (nonce: BigNumber | null) => void,
 }
 
+const calculateTimeInHours = (hashRate: number, lengthOfWord: number) =>  {
+    const result = ((27 ** lengthOfWord) / (hashRate * 1000000)) / 60 / 60;
+    console.log({ result, hashRate, lengthOfWord })
+    return result;
+}
+
+const getWordsFromOptions = (input: string): string[] | null => {
+    try {
+        //enter [hello,goodbye, hi]
+        const splitOnBrackets= input.split('[')[1].split(']')[0];
+        const splitOnCommas = splitOnBrackets.split(',');
+        return splitOnCommas.map(w => w.replace(/\s/g,''))
+    } catch (e) {
+        return null
+    }
+}
+
 export const commands = ({ stagedNonce, setStagedNonce }: CommandsInput) => ({
     help: () => <Help />,
     faq: () => <FAQ />,
     recent: () => <RecentlyMined />,
     links: () => <Links />,
     calc: (input: string) => {
-        const options = splitOnSpaces(input);
+        const options = getOptions<{ h?: string, l?: string }>(input);
+        const invalidOptions = assertValidOptions(options, ["h", "l"]);
+        if(invalidOptions) return invalidOptions;
 
-        if(options.length !== 2) return "Must enter exactly 2 integers."
+        const hashRate = parseInt(options.h || '');
+        const lengthOfWord = parseInt(options.l || '');
 
-        const hashRate = parseInt(options[0])
-        const lengthOfWord = parseInt(options[1])
+        if((options.h && !hashRate) || (options.l && !lengthOfWord)) return `Must enter valid, positive, non-zero integers.`
 
-        if(!hashRate || !lengthOfWord || hashRate < 0 || lengthOfWord < 0) return "Must enter valid, positive, non-zero integers."
-        const numberOfSeconds = (27 ^ lengthOfWord)/ hashRate * 1000000
-        return `It would take you ${numberOfSeconds / 60 / 60} hours to mine a word of length ${lengthOfWord}.`
+        if(hashRate) {
+            if(lengthOfWord) {
+                return `It would take you ${calculateTimeInHours(hashRate, lengthOfWord)} hours to mine a word of length ${lengthOfWord} at a hash rate of ${hashRate} MH/s.`
+            }
+            const wordLengths = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+            const times = wordLengths.map(l => ({ wordLength: l, time: calculateTimeInHours(hashRate, l) }))
+            const calculations = [{ hashRate, times }]
+            return <Calculations calculations={calculations} />
+        } else {
+            if(lengthOfWord) {
+                const hashRates = [1, 10, 100, 500, 10000] 
+                const calculations = hashRates
+                .map(hr => 
+                    ({ hashRate: hr, times: [
+                        { wordLength: lengthOfWord, time: calculateTimeInHours(hr, lengthOfWord) }
+                    ]}))
+                return <Calculations calculations={calculations} />
+            }
+            const wordLengths = [4, 6, 8, 10, 12, 13, 14, 15];
+            const hashRates = [10, 100, 500, 10000] 
+            const calculations = hashRates.map(hr => {
+                return {
+                    hashRate: hr,
+                    times: wordLengths.map(wordLength => ({ wordLength, time: calculateTimeInHours(hr, wordLength) }))
+                }
+            })
+            return <Calculations calculations={calculations} />
+        }
     },
     wallet: "Linking your wallet...",
     mine: (input: string) => {
-        const options = splitOnSpaces(input);
-        const offset = parseInt(options[0])
+        const options = getOptions<{ r?: string, n?: string, w?: string }>(input);
+        const invalidOptions = assertValidOptions(options, ["r", "n", "w"]);
+        if(invalidOptions) return invalidOptions;
 
-        return <FoundWords initialOffset={offset || 0} address={address} />
+        const randomNonce = options.r ? BigNumber.from(randomBytes(32)) : undefined;
+        const specifiedNonce = options.n? BigNumber.from(options.n) : undefined;
+        const wordOptions = options.w;
+        let words;
+
+        if(wordOptions) {
+            const processedWordOptions = getWordsFromOptions(wordOptions);
+            if(!processedWordOptions) return "Words must be passed in the following format: -w [hello,goodbye]"
+            words = processedWordOptions;
+        }
+
+        if(randomNonce && specifiedNonce) return "Cannot both specify a specific starting nonce and randomize nonce."
+
+        const startingNonce = randomNonce || specifiedNonce;
+
+        return <FoundWords initialOffset={startingNonce} address={address} lookingFor={words} />
     },
     mint: (input: string) => {
         const options = splitOnSpaces(input);
