@@ -11,9 +11,8 @@ import { BigNumber } from "@ethersproject/bignumber";
 
 const createWorker = createWorkerFactory(() => import("../../../../miner/mine"));
 
-type FoundWordsProps = { 
+type MineProps = { 
     initialOffset?: BigNumber, 
-    address: BigNumber, 
     lookingFor?: string[],
     workerCount?: number, 
 }
@@ -38,7 +37,7 @@ const WordAndNonce = ({ word, nonce }: { word: string, nonce: BigNumber }) => <d
 
 const flatten = (arr: FoundWord[]) => arr.reduce((acc, curr) => ({ ...acc, [curr.word]: curr.i._hex }), {})
 
-export const Mine = ({ initialOffset, address, lookingFor, workerCount } : FoundWordsProps) => {
+const ConnectedMine = ({ initialOffset, lookingFor, workerCount } : MineProps) => {
     const { library, account } = useWeb3React<Web3Provider>();
     const [foundWords, setFoundWords] = useState<FoundWord[]>([]);
     const [ellipses, setEllipses] = useState(1);
@@ -114,3 +113,15 @@ export const Mine = ({ initialOffset, address, lookingFor, workerCount } : Found
     </Column>
     )
 }
+
+export const Mine = ({ initialOffset, lookingFor, workerCount }: MineProps) => {
+    const provider = useWeb3React<Web3Provider>();
+    console.log({ provider })
+    const { account } = provider;
+  
+    return account != null ? (
+      <ConnectedMine initialOffset={initialOffset} lookingFor={lookingFor} workerCount={workerCount} />
+    ) : (
+      <p>Must connect account to mine.</p>
+    );
+  };

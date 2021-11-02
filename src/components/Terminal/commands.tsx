@@ -3,6 +3,7 @@ import { RecentlyMined } from './Views/RecentlyMined'
 import { Mine } from './Views/Mine'
 import { Help } from './Views/Help'
 import { Links } from './Views/Links'
+import { Connect } from './Views/Connect'
 import { Calculations } from './Views/Calculations'
 import { FoundWords } from './Views/FoundWords'
 import { BigNumber } from "@ethersproject/bignumber";
@@ -80,7 +81,7 @@ export const commands = ({ stagedNonce, setStagedNonce }: CommandsInput) => ({
             return <Calculations calculations={calculations} />
         }
     },
-    wallet: "Linking your wallet...",
+    connect: async () => <Connect />,
     mine: (input: string) => {
         const options = getOptions<{ r?: string, n?: string, w?: string }>(input);
         const invalidOptions = assertValidOptions(options, ["r", "n", "w"]);
@@ -105,7 +106,7 @@ export const commands = ({ stagedNonce, setStagedNonce }: CommandsInput) => ({
         console.log({ randomNonce, specifiedNonce })
         const startingNonce = randomNonce || specifiedNonce;
 
-        return <Mine initialOffset={startingNonce || BigNumber.from(0)} address={address} lookingFor={words} />
+        return <Mine initialOffset={startingNonce || BigNumber.from(0)} lookingFor={words} />
     },
     mint: (input: string) => {
         const options = splitOnSpaces(input);
