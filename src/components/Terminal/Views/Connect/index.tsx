@@ -16,7 +16,7 @@ export const Connect = () => {
 
   return (
     <div>
-      Account: {!account || !status ? "Connecting now..." : `Account connected: ${account}`}
+      {!account || !status ? "Connecting now..." : `Account connected: ${account}`}
     </div>
   );
 };

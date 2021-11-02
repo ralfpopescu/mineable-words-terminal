@@ -4,6 +4,7 @@ import { Mine } from './Views/Mine'
 import { Help } from './Views/Help'
 import { Links } from './Views/Links'
 import { Connect } from './Views/Connect'
+import { Mint } from './Views/Mint'
 import { Calculations } from './Views/Calculations'
 import { FoundWords } from './Views/FoundWords'
 import { BigNumber } from "@ethersproject/bignumber";
@@ -114,16 +115,9 @@ export const commands = ({ stagedNonce, setStagedNonce }: CommandsInput) => ({
         if(options.length !== 1) return "Must enter a single nonce."
 
         const stringNonce = options[0]
+        const nonce = BigNumber.from(stringNonce)
 
-        try {
-            const nonce = BigNumber.from(stringNonce)
-            const word = getWordFromHash(nonce, address)
-            setStagedNonce(nonce);
-            return `This nonce will mint the word "${word}". Do you want to proceed? y/n`
-        } catch (e) {
-            return `Invalid nonce.`
-        }
-        
+        return <Mint nonce={nonce}/>
     },
     found: () => <FoundWords />,
     "safe-mint": "Safe minting...",
