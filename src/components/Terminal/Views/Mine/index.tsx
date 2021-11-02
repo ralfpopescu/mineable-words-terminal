@@ -37,7 +37,7 @@ const WordAndNonce = ({ word, nonce }: { word: string, nonce: BigNumber }) => <d
 
 const flatten = (arr: FoundWord[]) => arr.reduce((acc, curr) => ({ ...acc, [curr.word]: curr.i._hex }), {})
 
-const ConnectedMine = ({ initialOffset, lookingFor, workerCount } : MineProps) => {
+export const Mine = ({ initialOffset, lookingFor, workerCount } : MineProps) => {
     const { library, account } = useWeb3React<Web3Provider>();
     const [foundWords, setFoundWords] = useState<FoundWord[]>([]);
     const [ellipses, setEllipses] = useState(1);
@@ -113,15 +113,3 @@ const ConnectedMine = ({ initialOffset, lookingFor, workerCount } : MineProps) =
     </Column>
     )
 }
-
-export const Mine = ({ initialOffset, lookingFor, workerCount }: MineProps) => {
-    const provider = useWeb3React<Web3Provider>();
-    console.log({ provider })
-    const { account } = provider;
-  
-    return account != null ? (
-      <ConnectedMine initialOffset={initialOffset} lookingFor={lookingFor} workerCount={workerCount} />
-    ) : (
-      <p>Must connect account to mine.</p>
-    );
-  };

@@ -19,6 +19,7 @@ const address = BigNumber.from(123);
 type CommandsInput = {
     stagedNonce: BigNumber | null,
     setStagedNonce: (nonce: BigNumber | null) => void,
+    account: string | null | undefined;
 }
 
 const calculateTimeInHours = (hashRate: number, lengthOfWord: number) =>  {
@@ -38,7 +39,7 @@ const getWordsFromOptions = (input: string): string[] | null => {
     }
 }
 
-export const commands = ({ stagedNonce, setStagedNonce }: CommandsInput) => ({
+export const commands = ({ stagedNonce, setStagedNonce, account }: CommandsInput) => ({
     help: () => <Help />,
     faq: () => <FAQ />,
     recent: () => <RecentlyMined />,
@@ -84,6 +85,8 @@ export const commands = ({ stagedNonce, setStagedNonce }: CommandsInput) => ({
     },
     connect: async () => <Connect />,
     mine: (input: string) => {
+        if(!account) return <div>Need to connect account to mine.</div>
+
         const options = getOptions<{ r?: string, n?: string, w?: string }>(input);
         const invalidOptions = assertValidOptions(options, ["r", "n", "w"]);
         if(invalidOptions) return invalidOptions;
@@ -110,6 +113,8 @@ export const commands = ({ stagedNonce, setStagedNonce }: CommandsInput) => ({
         return <Mine initialOffset={startingNonce || BigNumber.from(0)} lookingFor={words} />
     },
     mint: (input: string) => {
+        if(!account) return <div>Need to connect account to mint.</div>
+
         const options = splitOnSpaces(input);
 
         if(options.length !== 1) return "Must enter a single nonce."

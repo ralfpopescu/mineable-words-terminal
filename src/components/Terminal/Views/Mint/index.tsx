@@ -1,9 +1,10 @@
 import * as ethers from "ethers";
-import { useEffect } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import { MineableWords__factory } from '../../../../typechain'
 import { getWordFromHash } from '../../../../miner/mine'
+import { generateNonce } from "../../../../util";
 
 const MINEABLEWORDS_ADDR = process.env.MINEABLEWORDS_ADDR || '0x5FbDB2315678afecb367f032d93F642f64180aa3'
 
@@ -31,11 +32,14 @@ type MintProps = { nonce: ethers.BigNumber }
 
 export const Mint = ({ nonce }: MintProps) => {
     const { library, account } = useWeb3React<Web3Provider>();
+    const [hasAttempted, setHasAttempted] = useState(false)
+
     useEffect(() => {
-        if(account) {
+        if(account && !hasAttempted) {
             attemptMint(library!, nonce)
         }
-    }, [account, library, nonce])
+        setHasAttempted(true);
+    }, [])
 
     if(!account) return <div>Need to connect account to mint.</div>
 
@@ -45,3 +49,4 @@ export const Mint = ({ nonce }: MintProps) => {
     </div>
   );
 };
+
