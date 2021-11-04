@@ -3,6 +3,7 @@ import { RecentlyMined } from './Views/RecentlyMined'
 import { Mine } from './Views/Mine'
 import { Help } from './Views/Help'
 import { Links } from './Views/Links'
+import { Info } from './Views/Info'
 import { Connect } from './Views/Connect'
 import { Mint } from './Views/Mint'
 import { BountyOffer } from './Views/BountyOffer'
@@ -45,6 +46,7 @@ export const commands = ({ stagedNonce, setStagedNonce, account }: CommandsInput
     faq: () => <FAQ />,
     recent: () => <RecentlyMined />,
     links: () => <Links />,
+    info: () => <Info />,
     calc: (input: string) => {
         const options = getOptions<{ h?: string, l?: string }>(input);
         const invalidOptions = assertValidOptions(options, ["h", "l"]);

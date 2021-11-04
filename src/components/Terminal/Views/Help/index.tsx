@@ -7,22 +7,11 @@ export const Help = () => (
     <Command>clear</Command>
     <span>Clears console.</span>
     <Line />
-    <Command>faq</Command>
-    <span>See frequency asked questions.</span>
-    <Line />
-    <Command>recent</Command>
-    <span>See recently mined mwords.</span>
+    <Command>info</Command>
+    <span>Get helpful commands for information, like FAQ, links to resources, time-to-mine calculator, and mined mwords.</span>
     <Line />
     <Command>wallet</Command>
-    <span>Link your wallet. Only needed for safe-mint.</span>
-    <Line />
-    <Command>inspect [wallet]</Command>
-    <span>Shows mwords owned by some wallet.</span>
-    <span>*** example: inspect 0x75Dce9FfB3dA7Da232eF2139c7E1d00e8C60DD59</span>
-    <Line />
-    <Command>calc [-h hashRate] [-l lengthOfWord]</Command>
-    <span>Calculate estimated times to mine words. Pass a hash rate in MH/s to calculate times using that hash rate. Pass a word length to calculate time to find a specific word of that length. Default prints a table of common hash rates and word lengths.</span>
-    <span>*** example: calc -h 100 -l 9</span>
+    <span>Link your wallet. Needed for mining, minting, and bounties.</span>
     <Line />
     <Command>mine [-s startingNonce] [-w arrayOfWords]</Command>
     <span>Start mining for words in the browser using your CPU. If you pass an array of words, the miner will only log when it finds those words. If you pass a starting nonce, the miner will start at that number. By default, miner will start at 0 and log every word it finds.</span>
@@ -42,9 +31,5 @@ export const Help = () => (
     <Command>mint [nonce]</Command>
     <span>Mints an mword given some nonce. Use at your own risk: it is possible for people to snipe your nonce and mint before you!</span>
     <span>*** example: mint 0x7482eb</span>
-    <Line />
-    <Command>safe-mint [nonce]</Command>
-    <span>Mints an word given some nonce using two transactions, guaranteeing that no one can cut in front of you and mint your mword.</span>
-    <span>*** example: safe-mint 0x729abe</span>
 </div>
 )

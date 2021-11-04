@@ -68,13 +68,16 @@ export const getLetterFromNumber = (index: number) => {
   }
   
   export const getLetterFromHash = (hash: BigNumber, letterIndex: number) => {
-    const masked = hash.shr(letterIndex * 5).and('0x1f')
+    const masked = hash.shr(letterIndex * 5).and(BigNumber.from('0x1f'))
     const number = BigNumber.from(masked._hex).toNumber();
     return getLetterFromNumber(number);
   }
   
   export const  getWordLengthFromHash = (wordHash: BigNumber) => {
-    return BigNumber.from(wordHash.toHexString().slice(0, 6)).toNumber();
+    const uint96 = BigNumber.from('0xffffff');
+    const hash96 = wordHash.and(uint96);
+     const number = BigNumber.from(hash96.toHexString().slice(0, 3)).toNumber();
+     return number + 1;
   }
   
   export type FoundWord = { word: string, i: BigNumber, isValid: boolean }
