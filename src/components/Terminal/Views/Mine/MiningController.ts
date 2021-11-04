@@ -1,8 +1,7 @@
 import { createWorkerFactory, terminate } from "@shopify/web-worker";
 import { Web3Provider } from "@ethersproject/providers";
 import { BigNumber } from "ethers";
-import { FoundWord } from "../../../../miner/mine";
-import { access } from "fs";
+import { FoundWord } from "../../../../utils/word-util";
 
 const createWorker = createWorkerFactory(() => import("../../../../miner/mine-bulk"));
 

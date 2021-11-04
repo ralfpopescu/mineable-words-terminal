@@ -5,11 +5,12 @@ import { Help } from './Views/Help'
 import { Links } from './Views/Links'
 import { Connect } from './Views/Connect'
 import { Mint } from './Views/Mint'
+import { BountyOffer } from './Views/BountyOffer'
 import { Calculations } from './Views/Calculations'
 import { FoundWords } from './Views/FoundWords'
 import { BigNumber } from "@ethersproject/bignumber";
 import { randomBytes } from "@ethersproject/random";
-import { getWordFromHash } from '../../miner/mine'
+import { getWordFromHash } from '../../utils/word-util'
 import { assertValidOptions, getOptions } from '../../utils'
 
 const splitOnSpaces = (input: string) => input.split(/\s+/);
@@ -144,6 +145,8 @@ export const commands = ({ stagedNonce, setStagedNonce, account }: CommandsInput
         return `This process takes two transactions to ensure no one can snipe your bounty. Proceed? y/n`
     },
     "bounty-offer": (input: string) => {
+        if(!account) return <div>Need to connect account to offer a bounty.</div>
+
         const options = splitOnSpaces(input);
 
         if(options.length !== 2) return "Must enter a desired word and an offer in eth."
@@ -154,7 +157,7 @@ export const commands = ({ stagedNonce, setStagedNonce, account }: CommandsInput
         const parsedOffer = parseFloat(offer);
         if(!parsedOffer) return "Must offer a valid, positive amount of eth."
 
-        return `Do you want to offer ${offer} eth for the word ${word}? y/n`
+        return <BountyOffer word={word} offer={parsedOffer} />
     },
     y: () => {
         if(stagedNonce) {

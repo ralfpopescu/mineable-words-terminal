@@ -6,7 +6,7 @@ import MiningController from "./MiningController";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 
-import { FoundWord } from '../../../../miner/mine'
+import { FoundWord } from '../../../../utils/word-util'
 import { BigNumber } from "@ethersproject/bignumber";
 
 const createWorker = createWorkerFactory(() => import("../../../../miner/mine"));

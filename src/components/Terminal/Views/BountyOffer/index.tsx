@@ -1,23 +1,25 @@
 import * as ethers from "ethers";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import { MineableWords__factory } from '../../../../typechain'
-import { getWordFromHash } from '../../../../utils/word-util'
+import { getHashFromWord } from '../../../../utils/word-util'
 
 const MINEABLEWORDS_ADDR = process.env.MINEABLEWORDS_ADDR || '0x5FbDB2315678afecb367f032d93F642f64180aa3'
 
-export const attemptMint = async function (
+export const attemptBountyOffer = async function (
     lib: Web3Provider,
     nonce: ethers.BigNumber,
+    offer: number,
   ): Promise<string> {
+      console.log({ nonce, offer })
     const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, lib);
     try {
       const signer = lib.getSigner();
     //   const numMined = await contract.numMined();
         const numMined = 100;
       const tx = await contract.connect(signer).mint(nonce.toHexString(), {
-        gasLimit: (numMined + 1) % 33 === 0 ? 1400000 : 700000,
+        gasLimit: (numMined + 1) % 33 === 0 ? 1400000 : 700000, value: ethers.BigNumber.from(offer),
       });
       return tx.hash;
     } catch (e: any) {
@@ -27,33 +29,43 @@ export const attemptMint = async function (
     }
   };
 
-type MintProps = { nonce: ethers.BigNumber }
+type BounterOfferProps = { word: string, offer: number }
 
-export const Mint = ({ nonce }: MintProps) => {
+export const BountyOffer = ({ word, offer }: BounterOfferProps) => {
     const { library, account } = useWeb3React<Web3Provider>();
     const [hasCompleted, setHasCompleted] = useState(false)
-    const [error, setError] = useState()
+    const [error, setError] = useState();
+    const [nonce, setNonce] = useState<ethers.BigNumber | null>(null);
 
     useEffect(() => {
-        const mint = async () => {
-            if(account && !hasCompleted) {
+        const encodeWord = async () => {
+            if(library) {
+                const encoded = await getHashFromWord(word)
+                setNonce(encoded)
+            }
+        }
+        encodeWord();
+    }, [library, word])
+
+    useEffect(() => {
+        const bountyOffer = async () => {
+            if(account && !hasCompleted && nonce) {
                 try {
-                    await attemptMint(library!, nonce)
+                    console.log('!!!', { nonce, offer })
+                    await attemptBountyOffer(library!, nonce, offer)
                     setHasCompleted(true);
                 } catch (e: any) {
                     setError(e.message)
                 }
             }
         }
-        mint();
-    }, [])
-
-    if(!account) return <div>Need to connect account to mint.</div>
+        bountyOffer();
+    }, [account, nonce, hasCompleted])
 
   return (
     <div>
-      Minting mword {getWordFromHash(nonce, ethers.BigNumber.from(account))} -- {nonce._hex} 
-      {hasCompleted && <div>Successfully minted.</div>}
+      Offering bounty of {offer} for mword {word}{nonce && ` -- ${nonce}`}...
+      {hasCompleted && <div>Successfully offered bounty.</div>}
       {error && <div>Encountered error: {error}</div>}
     </div>
   );
