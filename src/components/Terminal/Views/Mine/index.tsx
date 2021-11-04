@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Dispatch, useMemo } from 'react'
 import styled from 'styled-components';
 import ReactInterval from 'react-interval';
 import { createWorkerFactory } from '@shopify/web-worker';
@@ -11,10 +11,19 @@ import { BigNumber } from "@ethersproject/bignumber";
 
 const createWorker = createWorkerFactory(() => import("../../../../miner/mine"));
 
-type MineProps = { 
+export enum MiningStatus {
+    WAITING_TO_START,
+    STARTED,
+    WAITING_TO_STOP,
+    STOPPED,
+  }
+
+export type MineProps = { 
     initialOffset?: BigNumber, 
     lookingFor?: string[],
     workerCount?: number, 
+    getMiningStatus: () => MiningStatus,
+    setMiningStatus: Dispatch<MiningStatus>,
 }
 
 const worker = createWorker();
@@ -26,24 +35,22 @@ flex-direction: column;
 
 const setSize = 10000000
 
-enum MiningStatus {
-    WAITING_TO_START,
-    STARTED,
-    WAITING_TO_STOP,
-    STOPPED,
-  }
+
 
 const WordAndNonce = ({ word, nonce }: { word: string, nonce: BigNumber }) => <div>{word} --- nonce: {nonce._hex}</div>
 
 const flatten = (arr: FoundWord[]) => arr.reduce((acc, curr) => ({ ...acc, [curr.word]: curr.i._hex }), {})
 
-export const Mine = ({ initialOffset, lookingFor, workerCount } : MineProps) => {
+export const Mine = ({ initialOffset, lookingFor, workerCount, getMiningStatus, setMiningStatus } : MineProps) => {
     const { library, account } = useWeb3React<Web3Provider>();
     const [foundWords, setFoundWords] = useState<FoundWord[]>([]);
     const [ellipses, setEllipses] = useState(1);
-    const [miningStatus, setMiningStatus] = useState<MiningStatus>(
-        MiningStatus.WAITING_TO_START
-      );
+    console.log({ getMiningStatus })
+
+    const miningStatus = getMiningStatus();
+
+    console.log({ miningStatus })
+
       
     const [miningController, setMiningController] =
     useState<MiningController | null>(null);
@@ -64,6 +71,7 @@ export const Mine = ({ initialOffset, lookingFor, workerCount } : MineProps) => 
 
     useEffect(() => {
     const stop = () => {
+        console.log("stop is called")
       miningController?.terminate();
       setMiningController(null);
       setMiningStatus(MiningStatus.STOPPED);
@@ -86,23 +94,26 @@ export const Mine = ({ initialOffset, lookingFor, workerCount } : MineProps) => 
         startingNonce: initialOffset,
       });
 
+      console.log('the heck', MiningStatus)
       setMiningController(controller);
       controller.start().catch((e) => {
         console.log("Error mining: " + e);
         stop();
       });
-
+      console.log('MiningStatus', MiningStatus)
       setMiningStatus(MiningStatus.STARTED);
+      console.log('mining status set', MiningStatus.STARTED)
     }
 
     return () => {
-      miningController?.terminate();
+        console.log('unmount')
+      stop();
     };
-  }, [miningStatus, library, account, miningController, workerCount, initialOffset, lookingFor]);
+  }, [miningStatus]);
 
     return (
     <Column>
-        <ReactInterval timeout={500} enabled={true}
+        <ReactInterval timeout={50000} enabled={true}
             callback={() => {
                 if(ellipses > 2) setEllipses(0)
                 else setEllipses(e => e + 1);

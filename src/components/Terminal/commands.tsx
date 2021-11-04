@@ -1,6 +1,6 @@
 import { FAQ } from './Views/FAQ'
 import { RecentlyMined } from './Views/RecentlyMined'
-import { Mine } from './Views/Mine'
+import { Mine, MineProps, MiningStatus } from './Views/Mine'
 import { Help } from './Views/Help'
 import { Links } from './Views/Links'
 import { Info } from './Views/Info'
@@ -19,9 +19,9 @@ const splitOnSpaces = (input: string) => input.split(/\s+/);
 const address = BigNumber.from(123);
 
 type CommandsInput = {
-    stagedNonce: BigNumber | null,
-    setStagedNonce: (nonce: BigNumber | null) => void,
     account: string | null | undefined;
+    getMiningStatus: MineProps['getMiningStatus'];
+    setMiningStatus: MineProps['setMiningStatus'];
 }
 
 const calculateTimeInHours = (hashRate: number, lengthOfWord: number) =>  {
@@ -41,7 +41,7 @@ const getWordsFromOptions = (input: string): string[] | null => {
     }
 }
 
-export const commands = ({ stagedNonce, setStagedNonce, account }: CommandsInput) => ({
+export const commands = ({ account, getMiningStatus, setMiningStatus }: CommandsInput) => ({
     help: () => <Help />,
     faq: () => <FAQ />,
     recent: () => <RecentlyMined />,
@@ -87,6 +87,11 @@ export const commands = ({ stagedNonce, setStagedNonce, account }: CommandsInput
         }
     },
     connect: async () => <Connect />,
+    stop: () => {
+        console.log('stopping!!')
+        setMiningStatus(MiningStatus.WAITING_TO_STOP);
+        return "Stopping mining."
+    },
     mine: (input: string) => {
         if(!account) return <div>Need to connect account to mine.</div>
 
@@ -110,10 +115,15 @@ export const commands = ({ stagedNonce, setStagedNonce, account }: CommandsInput
 
         if(randomNonce && specifiedNonce) return "Cannot both specify a specific starting nonce and randomize nonce."
 
-        console.log({ randomNonce, specifiedNonce })
+        console.log({ randomNonce, specifiedNonce, getMiningStatus })
         const startingNonce = randomNonce || specifiedNonce;
 
-        return <Mine initialOffset={startingNonce || BigNumber.from(0)} lookingFor={words} />
+        return <Mine 
+        initialOffset={startingNonce || BigNumber.from(0)} 
+        lookingFor={words} 
+        getMiningStatus={getMiningStatus}
+        setMiningStatus={setMiningStatus} 
+        />
     },
     mint: (input: string) => {
         if(!account) return <div>Need to connect account to mint.</div>
@@ -161,15 +171,10 @@ export const commands = ({ stagedNonce, setStagedNonce, account }: CommandsInput
 
         return <BountyOffer word={word} offer={parsedOffer} />
     },
-    y: () => {
-        if(stagedNonce) {
-            const word = getWordFromHash(stagedNonce, address)
-            return `Minting ${word}...`
-        }
-    },
-    n: () => {
-        if(stagedNonce) {
-            setStagedNonce(null)
-        }
-    },
   });
+
+
+  export const getCommands = ({ account, getMiningStatus, setMiningStatus }: CommandsInput) => {
+    //   console.log('getting commands', getMiningStatus, getMiningStatus())
+    return commands({ account, getMiningStatus, setMiningStatus })
+  }
