@@ -21,17 +21,11 @@ enum MiningStatus {
 export const Terminal = () => {
     const provider = useWeb3React<Web3Provider>();
     const { account } = provider;
-    const [miningStatus, setMiningStatus] = useState<MiningStatus>(
-        MiningStatus.WAITING_TO_START
-      );
-    console.log('rerender terminal', { miningStatus })
-
-    const getMiningStatus = useCallback(() => miningStatus, [miningStatus])
     const location = useLocation();
     const navigate = useNavigate();
 
-    const commands = useMemo(() => getCommands({ account, getMiningStatus, setMiningStatus, location, navigate }), 
-    [account, setMiningStatus, getMiningStatus, location, navigate])
+    const commands = useMemo(() => getCommands({ account, location, navigate }), 
+    [account, location, navigate])
 
   return (
     <ReactTerminal

@@ -13,6 +13,6 @@ export const FoundWords = () => {
 
     return (
     <Column>
-       {foundWords && <>{Object.keys(parsed).map(word => <div>{word} -- nonce: {parsed[word]}</div>)}</>}
+       {foundWords ? <>{Object.keys(parsed).map(word => <div>{word} -- nonce: {parsed[word]}</div>)}</> : <div>No mwords found. Use command "mine" to find them.</div>}
     </Column>
 )}

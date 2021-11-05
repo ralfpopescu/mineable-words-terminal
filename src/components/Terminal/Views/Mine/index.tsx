@@ -1,16 +1,13 @@
-import { useState, useEffect, Dispatch, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import styled from 'styled-components';
 import ReactInterval from 'react-interval';
-import { createWorkerFactory } from '@shopify/web-worker';
 import MiningController from "./MiningController"; 
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
-import { useLocation, Location } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 import { FoundWord } from '../../../../utils/word-util'
 import { BigNumber } from "@ethersproject/bignumber";
-
-const createWorker = createWorkerFactory(() => import("../../../../miner/mine"));
 
 export enum MiningStatus {
     WAITING_TO_START,
@@ -23,19 +20,13 @@ export type MineProps = {
     initialOffset?: BigNumber, 
     lookingFor?: string[],
     workerCount?: number, 
-    getMiningStatus: () => MiningStatus,
-    setMiningStatus: Dispatch<MiningStatus>,
     minerId: string,
 }
-
-const worker = createWorker();
 
 const Column = styled.div`
 display: flex;
 flex-direction: column;
 `
-
-const setSize = 10000000
 
 const getQueryParamsFromSearch = (search: string): Object => {
     if(!search || !search.length) return {}
@@ -50,34 +41,21 @@ const getQueryParamsFromSearch = (search: string): Object => {
     }, {}) as MiningQueryStatus;
 }
 
-export const useQueryParams = (location: Location) => {
-    return new URLSearchParams(location.search);
-  }
-
-// export const setQueryParams = ({ query}) => {
-//     const 
-// }
-
 const WordAndNonce = ({ word, nonce }: { word: string, nonce: BigNumber }) => <div>{word} --- nonce: {nonce._hex}</div>
 
 const flatten = (arr: FoundWord[]) => arr.reduce((acc, curr) => ({ ...acc, [curr.word]: curr.i._hex }), {})
 
 type MiningQueryStatus = { status: MiningStatus }
 
-export const Mine = ({ initialOffset, lookingFor, workerCount, setMiningStatus, minerId} : MineProps) => {
+export const Mine = ({ initialOffset, lookingFor, workerCount, minerId} : MineProps) => {
     const { library, account } = useWeb3React<Web3Provider>();
     const [foundWords, setFoundWords] = useState<FoundWord[]>([]);
     const [ellipses, setEllipses] = useState(1);
     const location = useLocation();
     const queryParams = getQueryParamsFromSearch(location.search)
 
-     //@ts-ignore
-    console.log({ minerId, status: queryParams[minerId], queryParams })
     //@ts-ignore
     const miningStatus: any = queryParams[minerId] ? parseInt(queryParams[minerId]) : MiningStatus.STOPPED;
-
-    console.log({ miningStatus })
-
       
     const [miningController, setMiningController] =
     useState<MiningController | null>(null);
@@ -97,21 +75,25 @@ export const Mine = ({ initialOffset, lookingFor, workerCount, setMiningStatus, 
 
 
     useEffect(() => {
-    const stop = () => {
-        console.log("stop is called")
-      miningController?.terminate();
-      setMiningController(null);
-      setMiningStatus(MiningStatus.STOPPED);
-      setHashRate(0);
+    const stop = async () => {
+        console.log("stop is called", miningController)
+        if(miningController) {
+            await miningController.terminate();
+            setMiningController(null)
+            setHashRate(0);
+        }
     };
     const onWordsFound = (words: FoundWord[]) => {
         setFoundWords(w => [...w, ...words]);
     };
 
-    if (miningStatus === MiningStatus.WAITING_TO_STOP) {
+    let controller: any;
+
+    if (miningStatus === MiningStatus.STOPPED) {
+        console.log('waiting to stop', { miningController })
       stop();
     } else if (miningStatus === MiningStatus.WAITING_TO_START) {
-      const controller = new MiningController({
+      controller = new MiningController({
         library: library!,
         address: account!,
         workerCount: workerCount || 1,
@@ -123,32 +105,36 @@ export const Mine = ({ initialOffset, lookingFor, workerCount, setMiningStatus, 
 
       console.log('the heck', MiningStatus)
       setMiningController(controller);
-      controller.start().catch((e) => {
+      controller.start().catch((e: any) => {
         console.log("Error mining: " + e);
         stop();
       });
-      console.log('MiningStatus', MiningStatus)
-      setMiningStatus(MiningStatus.STARTED);
-      console.log('mining status set', MiningStatus.STARTED)
     }
 
     return () => {
         console.log('unmount')
-      stop();
+        controller?.terminate();
+        setMiningController(null)
+        setHashRate(0);
     };
   }, [miningStatus]);
 
-  if(miningStatus === MiningStatus.STOPPED) return <div>Miner stopped. Type "found" to see words you have found.</div>
+  if(miningStatus === MiningStatus.STOPPED) return (
+    <Column>
+        <div>{foundWords.map(fw => <WordAndNonce word={fw.word} nonce={fw.i} />)}</div>
+        <div>Miner stopped. Type "found" to see words you have found.</div>
+    </Column>
+  )
 
     return (
     <Column>
-        <ReactInterval timeout={50000} enabled={true}
+        <ReactInterval timeout={500} enabled={true}
             callback={() => {
                 if(ellipses > 2) setEllipses(0)
                 else setEllipses(e => e + 1);
             }} />
-        <div>Mining mwords{'.'.repeat(ellipses)}</div>
-        <div>Hash rate: {hashRate} h/s</div>
+        {hashRate ? <div>Mining mwords{'.'.repeat(ellipses)}</div> : <div>Starting up the miner...</div>}
+        {<div>Hash rate: ~{hashRate || '???'} h/s</div>}
         <div>{foundWords.map(fw => <WordAndNonce word={fw.word} nonce={fw.i} />)}</div>
     </Column>
     )

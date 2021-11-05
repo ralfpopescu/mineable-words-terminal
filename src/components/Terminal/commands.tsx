@@ -21,8 +21,6 @@ const address = BigNumber.from(123);
 
 type CommandsInput = {
     account: string | null | undefined;
-    getMiningStatus: MineProps['getMiningStatus'];
-    setMiningStatus: MineProps['setMiningStatus'];
     location: Location;
     navigate: NavigateFunction;
 }
@@ -44,7 +42,7 @@ const getWordsFromOptions = (input: string): string[] | null => {
     }
 }
 
-export const commands = ({ account, getMiningStatus, setMiningStatus, location, navigate }: CommandsInput) => ({
+export const commands = ({ account, location, navigate }: CommandsInput) => ({
     help: () => <Help />,
     faq: () => <FAQ />,
     recent: () => <RecentlyMined />,
@@ -118,7 +116,7 @@ export const commands = ({ account, getMiningStatus, setMiningStatus, location, 
 
         if(randomNonce && specifiedNonce) return "Cannot both specify a specific starting nonce and randomize nonce."
 
-        console.log({ randomNonce, specifiedNonce, getMiningStatus })
+        console.log({ randomNonce, specifiedNonce })
         const startingNonce = randomNonce || specifiedNonce;
 
         const minerId = generateNonce(12);
@@ -128,8 +126,6 @@ export const commands = ({ account, getMiningStatus, setMiningStatus, location, 
         return <Mine 
         initialOffset={startingNonce || BigNumber.from(0)} 
         lookingFor={words} 
-        getMiningStatus={getMiningStatus}
-        setMiningStatus={setMiningStatus} 
         minerId={minerId}
         />
     },
@@ -182,7 +178,7 @@ export const commands = ({ account, getMiningStatus, setMiningStatus, location, 
   });
 
 
-  export const getCommands = ({ account, getMiningStatus, setMiningStatus, location, navigate }: CommandsInput) => {
+  export const getCommands = ({ account, location, navigate }: CommandsInput) => {
     //   console.log('getting commands', getMiningStatus, getMiningStatus())
-    return commands({ account, getMiningStatus, setMiningStatus, location, navigate })
+    return commands({ account, location, navigate })
   }
