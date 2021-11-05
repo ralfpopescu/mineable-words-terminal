@@ -3,6 +3,7 @@ import './App.css';
 import styled from 'styled-components';
 import { Terminal } from './components/Terminal'
 import { TerminalContextProvider } from "react-terminal";
+import { MemoryRouter } from 'react-router-dom'
 
 const FullScreen = styled.div`
 position: absolute;
@@ -15,11 +16,13 @@ bottom: 0;
 function App() {
   return (
     <TerminalContextProvider>
+      <MemoryRouter>
     <div className="App">
       <FullScreen>
         <Terminal />
       </FullScreen>
     </div>
+    </MemoryRouter>
     </TerminalContextProvider>
   );
 }

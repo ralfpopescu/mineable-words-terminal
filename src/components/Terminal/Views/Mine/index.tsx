@@ -5,6 +5,7 @@ import { createWorkerFactory } from '@shopify/web-worker';
 import MiningController from "./MiningController"; 
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
+import { useLocation, Location } from 'react-router-dom'
 
 import { FoundWord } from '../../../../utils/word-util'
 import { BigNumber } from "@ethersproject/bignumber";
@@ -24,6 +25,7 @@ export type MineProps = {
     workerCount?: number, 
     getMiningStatus: () => MiningStatus,
     setMiningStatus: Dispatch<MiningStatus>,
+    minerId: string,
 }
 
 const worker = createWorker();
@@ -35,19 +37,41 @@ flex-direction: column;
 
 const setSize = 10000000
 
+const getQueryParamsFromSearch = (search: string): MiningQueryStatus => {
+    const split = search.split('?')[1]
+    const splitOnAmp = split.split('&')
+    return splitOnAmp.reduce((acc, curr) => {
+        const splitKeyValue = curr.split('=')
+        const key = splitKeyValue[0]
+        const value = splitKeyValue[1]
+        return { ...acc, [key]: value }
+    }, {}) as MiningQueryStatus;
+}
 
+export const useQueryParams = (location: Location) => {
+    return new URLSearchParams(location.search);
+  }
+
+// export const setQueryParams = ({ query}) => {
+//     const 
+// }
 
 const WordAndNonce = ({ word, nonce }: { word: string, nonce: BigNumber }) => <div>{word} --- nonce: {nonce._hex}</div>
 
 const flatten = (arr: FoundWord[]) => arr.reduce((acc, curr) => ({ ...acc, [curr.word]: curr.i._hex }), {})
 
-export const Mine = ({ initialOffset, lookingFor, workerCount, getMiningStatus, setMiningStatus } : MineProps) => {
+type MiningQueryStatus = { status: MiningStatus }
+
+export const Mine = ({ initialOffset, lookingFor, workerCount, setMiningStatus, minerId} : MineProps) => {
     const { library, account } = useWeb3React<Web3Provider>();
     const [foundWords, setFoundWords] = useState<FoundWord[]>([]);
     const [ellipses, setEllipses] = useState(1);
-    console.log({ getMiningStatus })
+    const location = useLocation();
+    const queryParams = getQueryParamsFromSearch(location.search)
 
-    const miningStatus = getMiningStatus();
+    console.log({ status: queryParams.status })
+    //@ts-ignore
+    const miningStatus: any = parseInt(queryParams.status);
 
     console.log({ miningStatus })
 

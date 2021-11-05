@@ -11,8 +11,9 @@ import { Calculations } from './Views/Calculations'
 import { FoundWords } from './Views/FoundWords'
 import { BigNumber } from "@ethersproject/bignumber";
 import { randomBytes } from "@ethersproject/random";
-import { getWordFromHash } from '../../utils/word-util'
+import { getWordFromHash, generateNonce } from '../../utils/word-util'
 import { assertValidOptions, getOptions } from '../../utils'
+import { Location, NavigateFunction } from 'react-router-dom';
 
 const splitOnSpaces = (input: string) => input.split(/\s+/);
 
@@ -22,6 +23,8 @@ type CommandsInput = {
     account: string | null | undefined;
     getMiningStatus: MineProps['getMiningStatus'];
     setMiningStatus: MineProps['setMiningStatus'];
+    location: Location;
+    navigate: NavigateFunction;
 }
 
 const calculateTimeInHours = (hashRate: number, lengthOfWord: number) =>  {
@@ -41,7 +44,7 @@ const getWordsFromOptions = (input: string): string[] | null => {
     }
 }
 
-export const commands = ({ account, getMiningStatus, setMiningStatus }: CommandsInput) => ({
+export const commands = ({ account, getMiningStatus, setMiningStatus, location, navigate }: CommandsInput) => ({
     help: () => <Help />,
     faq: () => <FAQ />,
     recent: () => <RecentlyMined />,
@@ -89,7 +92,7 @@ export const commands = ({ account, getMiningStatus, setMiningStatus }: Commands
     connect: async () => <Connect />,
     stop: () => {
         console.log('stopping!!')
-        setMiningStatus(MiningStatus.WAITING_TO_STOP);
+        navigate('/?status=2')
         return "Stopping mining."
     },
     mine: (input: string) => {
@@ -118,11 +121,14 @@ export const commands = ({ account, getMiningStatus, setMiningStatus }: Commands
         console.log({ randomNonce, specifiedNonce, getMiningStatus })
         const startingNonce = randomNonce || specifiedNonce;
 
+        navigate('/?status=0')
+
         return <Mine 
         initialOffset={startingNonce || BigNumber.from(0)} 
         lookingFor={words} 
         getMiningStatus={getMiningStatus}
         setMiningStatus={setMiningStatus} 
+        minerId={generateNonce(12)}
         />
     },
     mint: (input: string) => {
@@ -174,7 +180,7 @@ export const commands = ({ account, getMiningStatus, setMiningStatus }: Commands
   });
 
 
-  export const getCommands = ({ account, getMiningStatus, setMiningStatus }: CommandsInput) => {
+  export const getCommands = ({ account, getMiningStatus, setMiningStatus, location, navigate }: CommandsInput) => {
     //   console.log('getting commands', getMiningStatus, getMiningStatus())
-    return commands({ account, getMiningStatus, setMiningStatus })
+    return commands({ account, getMiningStatus, setMiningStatus, location, navigate })
   }

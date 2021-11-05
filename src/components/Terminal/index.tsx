@@ -1,5 +1,6 @@
 import { ReactTerminal } from "react-terminal";
-import { useState } from 'react'
+import { useState, useMemo, useCallback } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import { BigNumber } from "@ethersproject/bignumber";
@@ -25,14 +26,16 @@ export const Terminal = () => {
       );
     console.log('rerender terminal', { miningStatus })
 
-  const getMiningStatus = () => {
-      console.log('get mining status called', miningStatus)
-      return miningStatus;
-    };
+    const getMiningStatus = useCallback(() => miningStatus, [miningStatus])
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const commands = useMemo(() => getCommands({ account, getMiningStatus, setMiningStatus, location, navigate }), 
+    [account, setMiningStatus, getMiningStatus, location, navigate])
 
   return (
     <ReactTerminal
-      commands={getCommands({ account, getMiningStatus, setMiningStatus })}
+      commands={commands}
       welcomeMessage={welcomeMessage}
       themes={{
         theme: {
