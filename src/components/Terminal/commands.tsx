@@ -92,7 +92,7 @@ export const commands = ({ account, getMiningStatus, setMiningStatus, location, 
     connect: async () => <Connect />,
     stop: () => {
         console.log('stopping!!')
-        navigate('/?status=2')
+        navigate('/')
         return "Stopping mining."
     },
     mine: (input: string) => {
@@ -121,14 +121,16 @@ export const commands = ({ account, getMiningStatus, setMiningStatus, location, 
         console.log({ randomNonce, specifiedNonce, getMiningStatus })
         const startingNonce = randomNonce || specifiedNonce;
 
-        navigate('/?status=0')
+        const minerId = generateNonce(12);
+
+        navigate(`/?${minerId}=0`)
 
         return <Mine 
         initialOffset={startingNonce || BigNumber.from(0)} 
         lookingFor={words} 
         getMiningStatus={getMiningStatus}
         setMiningStatus={setMiningStatus} 
-        minerId={generateNonce(12)}
+        minerId={minerId}
         />
     },
     mint: (input: string) => {

@@ -37,7 +37,9 @@ flex-direction: column;
 
 const setSize = 10000000
 
-const getQueryParamsFromSearch = (search: string): MiningQueryStatus => {
+const getQueryParamsFromSearch = (search: string): Object => {
+    if(!search || !search.length) return {}
+
     const split = search.split('?')[1]
     const splitOnAmp = split.split('&')
     return splitOnAmp.reduce((acc, curr) => {
@@ -69,9 +71,10 @@ export const Mine = ({ initialOffset, lookingFor, workerCount, setMiningStatus, 
     const location = useLocation();
     const queryParams = getQueryParamsFromSearch(location.search)
 
-    console.log({ status: queryParams.status })
+     //@ts-ignore
+    console.log({ minerId, status: queryParams[minerId], queryParams })
     //@ts-ignore
-    const miningStatus: any = parseInt(queryParams.status);
+    const miningStatus: any = queryParams[minerId] ? parseInt(queryParams[minerId]) : MiningStatus.STOPPED;
 
     console.log({ miningStatus })
 
@@ -134,6 +137,8 @@ export const Mine = ({ initialOffset, lookingFor, workerCount, setMiningStatus, 
       stop();
     };
   }, [miningStatus]);
+
+  if(miningStatus === MiningStatus.STOPPED) return <div>Miner stopped. Type "found" to see words you have found.</div>
 
     return (
     <Column>
