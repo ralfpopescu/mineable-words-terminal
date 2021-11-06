@@ -51,7 +51,7 @@ export const BountyOffer = ({ word, offer }: BounterOfferProps) => {
         const bountyOffer = async () => {
             if(account && !hasCompleted && nonce) {
                 try {
-                    console.log('!!!', { nonce, offer })
+                    console.log('!!!', { nonce, offer, hasCompleted })
                     await attemptBountyOffer(library!, nonce, offer)
                     setHasCompleted(true);
                 } catch (e: any) {
@@ -60,7 +60,7 @@ export const BountyOffer = ({ word, offer }: BounterOfferProps) => {
             }
         }
         bountyOffer();
-    }, [account, nonce, hasCompleted])
+    }, [account, nonce, hasCompleted, library, offer])
 
   return (
     <div>

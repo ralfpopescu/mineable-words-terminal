@@ -27,3 +27,27 @@ export const assertValidOptions = (options: Obj, validOptions: string[]) => {
 
     return `Unrecognized option(s): ${invalid.map(inv => `-${inv}`).join(', ')}`
 }
+
+export const getQueryParamsFromSearch = (search: string): { [key: string] : string } => {
+    if(!search || !search.length) return {}
+
+    const split = search.split('?')[1]
+    const splitOnAmp = split.split('&')
+    return splitOnAmp.reduce((acc, curr) => {
+        const splitKeyValue = curr.split('=')
+        const key = splitKeyValue[0]
+        const value = splitKeyValue[1]
+        return { ...acc, [key]: value }
+    }, {});
+}
+
+export const getNavigationPathFromParams = (params: { [key: string] : string }): string => {
+    const keys = Object.keys(params);
+    return keys.reduce((navPath: string, key: string, index: number) => {
+        const value = params[key]
+        if(index) return `${navPath}&${key}=${value}`
+        return `${navPath}${key}=${value}`
+    }, '?')
+}
+
+export const concatQueryParams = (search: string, newParam: string) => `/?${search.length ? `${search}&` : ''}${newParam}`

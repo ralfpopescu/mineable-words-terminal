@@ -38,14 +38,12 @@ const getQueryParamsFromSearch = (search: string): Object => {
         const key = splitKeyValue[0]
         const value = splitKeyValue[1]
         return { ...acc, [key]: value }
-    }, {}) as MiningQueryStatus;
+    }, {});
 }
 
 const WordAndNonce = ({ word, nonce }: { word: string, nonce: BigNumber }) => <div>{word} --- nonce: {nonce._hex}</div>
 
 const flatten = (arr: FoundWord[]) => arr.reduce((acc, curr) => ({ ...acc, [curr.word]: curr.i._hex }), {})
-
-type MiningQueryStatus = { status: MiningStatus }
 
 export const Mine = ({ initialOffset, lookingFor, workerCount, minerId} : MineProps) => {
     const { library, account } = useWeb3React<Web3Provider>();
@@ -53,6 +51,7 @@ export const Mine = ({ initialOffset, lookingFor, workerCount, minerId} : MinePr
     const [ellipses, setEllipses] = useState(1);
     const location = useLocation();
     const queryParams = getQueryParamsFromSearch(location.search)
+    console.log({ queryParams, minerId })
 
     //@ts-ignore
     const miningStatus: any = queryParams[minerId] ? parseInt(queryParams[minerId]) : MiningStatus.STOPPED;

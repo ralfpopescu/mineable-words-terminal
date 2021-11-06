@@ -1,6 +1,6 @@
 import { FAQ } from './Views/FAQ'
 import { RecentlyMined } from './Views/RecentlyMined'
-import { Mine, MineProps, MiningStatus } from './Views/Mine'
+import { Mine } from './Views/Mine'
 import { Help } from './Views/Help'
 import { Links } from './Views/Links'
 import { Info } from './Views/Info'
@@ -12,7 +12,7 @@ import { FoundWords } from './Views/FoundWords'
 import { BigNumber } from "@ethersproject/bignumber";
 import { randomBytes } from "@ethersproject/random";
 import { getWordFromHash, generateNonce } from '../../utils/word-util'
-import { assertValidOptions, getOptions } from '../../utils'
+import { assertValidOptions, getOptions, getQueryParamsFromSearch, getNavigationPathFromParams, concatQueryParams } from '../../utils'
 import { Location, NavigateFunction } from 'react-router-dom';
 
 const splitOnSpaces = (input: string) => input.split(/\s+/);
@@ -89,8 +89,20 @@ export const commands = ({ account, location, navigate }: CommandsInput) => ({
     },
     connect: async () => <Connect />,
     stop: () => {
+        const params = getQueryParamsFromSearch(location.search);
+        const keys = Object.keys(params);
+        const newParams = keys.map((key: string) => {
+            const split = key.split('-');
+            const paramType = split[0];
+            const paramId = split[1];
+            if(paramType === 'miner') {
+                return { [`miner-${paramId}`]: '3'}
+            }
+            return { [key]: params[key] }
+        }).reduce((acc, curr) => ({ ...acc, ...curr }))
+        const navPath = getNavigationPathFromParams(newParams);
         console.log('stopping!!')
-        navigate('/')
+        navigate(navPath)
         return "Stopping mining."
     },
     mine: (input: string) => {
@@ -119,9 +131,9 @@ export const commands = ({ account, location, navigate }: CommandsInput) => ({
         console.log({ randomNonce, specifiedNonce })
         const startingNonce = randomNonce || specifiedNonce;
 
-        const minerId = generateNonce(12);
+        const minerId = `miner-${generateNonce(12)}`;
 
-        navigate(`/?${minerId}=0`)
+        navigate(concatQueryParams(location.search, `${minerId}=0`));
 
         return <Mine 
         initialOffset={startingNonce || BigNumber.from(0)} 

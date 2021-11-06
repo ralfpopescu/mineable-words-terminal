@@ -1,5 +1,5 @@
 import * as ethers from "ethers";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import { MineableWords__factory } from '../../../../typechain'
@@ -36,7 +36,7 @@ export const Mint = ({ nonce }: MintProps) => {
 
     useEffect(() => {
         const mint = async () => {
-            if(account && !hasCompleted) {
+            if(account && !hasCompleted && !error) {
                 try {
                     await attemptMint(library!, nonce)
                     setHasCompleted(true);
@@ -46,7 +46,7 @@ export const Mint = ({ nonce }: MintProps) => {
             }
         }
         mint();
-    }, [])
+    })
 
     if(!account) return <div>Need to connect account to mint.</div>
 

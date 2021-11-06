@@ -1,23 +1,13 @@
 import { ReactTerminal } from "react-terminal";
-import { useState, useMemo, useCallback } from 'react'
+import { useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
-import { BigNumber } from "@ethersproject/bignumber";
 import { getCommands } from './commands'
 
 
 const welcomeMessage = `Welcome to MineableWords (MWORDS). Enter "help" to get started.
 `
-
-enum MiningStatus {
-    WAITING_TO_START,
-    STARTED,
-    WAITING_TO_STOP,
-    STOPPED,
-  }
-
-
 export const Terminal = () => {
     const provider = useWeb3React<Web3Provider>();
     const { account } = provider;
