@@ -50,4 +50,16 @@ export const getNavigationPathFromParams = (params: { [key: string] : string }):
     }, '?')
 }
 
-export const concatQueryParams = (search: string, newParam: string) => `/?${search.length ? `${search}&` : ''}${newParam}`
+export const addQueryParamsToNavPath = (params: { [key: string] : string }, search: string): string => {
+    const currentParams = getQueryParamsFromSearch(search);
+    const newParams = { ...currentParams, ...params }
+    return getNavigationPathFromParams(newParams);
+}
+
+export const concatQueryParams = (search: string, newParam: string) => {
+    console.log({ search, newParam })
+    if(search.length) {
+        return `${search}&${newParam}`
+    }
+    return `?${newParam}`
+}
