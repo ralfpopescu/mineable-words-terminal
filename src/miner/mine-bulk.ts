@@ -1,6 +1,7 @@
 import { solidityKeccak256 } from "ethers/lib/utils";
 import { BigNumber } from "@ethersproject/bignumber";
 import axios from 'axios'
+import { getWordFromNonceAndAddress } from "../utils/word-util";
 
 let cachedData: any;
 type Obj = { [key: string]: boolean }
@@ -98,7 +99,8 @@ export async function mine(
     const foundWords = [];
   
     for (let i = rangeStart; i.lt(rangeEnd); i = i.add(1)) {
-      const word = getWordFromHash(i, address)
+      const word = getWordFromNonceAndAddress(i, address)
+      if(i.mod(1000).toNumber() === 0) console.log(word)
 
       const wordExists = existingWords[word];
 

@@ -92,8 +92,7 @@ export const getLetterFromNumber = (index: number) => {
     const numberOfLetters = getWordLengthFromHash(attempt)
   
     return new Array(numberOfLetters).fill(null)
-    .map((_, i) => getLetterFromHash(attempt, i)) 
-    .reverse().join('')
+    .map((_, i) => getLetterFromHash(attempt, i)).join(''); 
   }
 
   export const getWordFromHash = (hash: BigNumber) => {

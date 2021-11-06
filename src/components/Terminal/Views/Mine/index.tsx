@@ -5,6 +5,7 @@ import MiningController from "./MiningController";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import { useLocation } from 'react-router-dom'
+import { getQueryParamsFromSearch } from '../../../../utils'
 
 import { FoundWord } from '../../../../utils/word-util'
 import { BigNumber } from "@ethersproject/bignumber";
@@ -27,19 +28,6 @@ const Column = styled.div`
 display: flex;
 flex-direction: column;
 `
-
-const getQueryParamsFromSearch = (search: string): Object => {
-    if(!search || !search.length) return {}
-
-    const split = search.split('?')[1]
-    const splitOnAmp = split.split('&')
-    return splitOnAmp.reduce((acc, curr) => {
-        const splitKeyValue = curr.split('=')
-        const key = splitKeyValue[0]
-        const value = splitKeyValue[1]
-        return { ...acc, [key]: value }
-    }, {});
-}
 
 const WordAndNonce = ({ word, nonce }: { word: string, nonce: BigNumber }) => <div>{word} --- nonce: {nonce._hex}</div>
 
@@ -75,7 +63,6 @@ export const Mine = ({ initialOffset, lookingFor, workerCount, minerId} : MinePr
 
     useEffect(() => {
     const stop = async () => {
-        console.log("stop is called", miningController)
         if(miningController) {
             await miningController.terminate();
             setMiningController(null)
@@ -95,7 +82,7 @@ export const Mine = ({ initialOffset, lookingFor, workerCount, minerId} : MinePr
       controller = new MiningController({
         library: library!,
         address: account!,
-        workerCount: workerCount || 1,
+        workerCount: workerCount || 4,
         onWordsFound,
         updateHashRate: setHashRate,
         lookingFor,
