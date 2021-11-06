@@ -72,17 +72,21 @@ export const getLetterFromNumber = (index: number) => {
     const number = BigNumber.from(masked._hex).toNumber();
     return getLetterFromNumber(number);
   }
+
+  export const toUint96 = (num: BigNumber) => {
+    const mask = BigNumber.from('0xffffffffffffffffffffffff');
+    return num.and(mask);
+  }
   
-  export const  getWordLengthFromHash = (wordHash: BigNumber) => {
-    const uint96 = BigNumber.from('0xffffff');
-    const hash96 = wordHash.and(uint96);
+  export const getWordLengthFromHash = (wordHash: BigNumber) => {
+    const hash96 = toUint96(wordHash)
      const number = BigNumber.from(hash96.toHexString().slice(0, 3)).toNumber();
-     return number + 1;
+     return number;
   }
   
   export type FoundWord = { word: string, i: BigNumber, isValid: boolean }
   
-  export const getWordFromHash = (nonce: BigNumber, _address: BigNumber,) => {
+  export const getWordFromNonceAndAddress = (nonce: BigNumber, _address: BigNumber) => {
     const address = BigNumber.from(_address._hex);
     const attempt = hash(address, nonce);
     const numberOfLetters = getWordLengthFromHash(attempt)
@@ -91,13 +95,29 @@ export const getLetterFromNumber = (index: number) => {
     .map((_, i) => getLetterFromHash(attempt, i)) 
     .reverse().join('')
   }
+
+  export const getWordFromHash = (hash: BigNumber) => {
+    const numberOfLetters = getWordLengthFromHash(hash)
+  
+    return new Array(numberOfLetters).fill(null)
+    .map((_, i) => getLetterFromHash(hash, i)).join(''); 
+  }
+
+  const getLengthBits = (length: number) => BigNumber.from(length).shl(92);
   
   export const getHashFromWord = (word: string): BigNumber => {
-    let sum = BigNumber.from(0)
+    const length = word.length;
+    const lengthBits = getLengthBits(length);
+
+    let sum = lengthBits;
+
     for(let i = 0; i < word.length; i += 1) {
       const char = word.charAt(i);
-      const letterNumber = letterToBigNumber[char].shl(i * 5);
-      sum = sum.add(letterNumber)
+      const letterNumber = letterToBigNumber[char];
+      const shifted = letterNumber.shl(i * 5);
+      console.log({ char, letterNumber, shifted })
+
+      sum = sum.add(shifted)
     }
     return sum;
   }

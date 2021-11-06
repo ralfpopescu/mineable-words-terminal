@@ -11,7 +11,7 @@ import { Calculations } from './Views/Calculations'
 import { FoundWords } from './Views/FoundWords'
 import { BigNumber } from "@ethersproject/bignumber";
 import { randomBytes } from "@ethersproject/random";
-import { getWordFromHash, generateNonce } from '../../utils/word-util'
+import { getWordFromNonceAndAddress, generateNonce } from '../../utils/word-util'
 import { assertValidOptions, getOptions, getQueryParamsFromSearch, getNavigationPathFromParams, concatQueryParams } from '../../utils'
 import { Location, NavigateFunction } from 'react-router-dom';
 import { Web3Provider } from "@ethersproject/providers";
@@ -197,7 +197,7 @@ export const commands = ({ account, location, navigate }: CommandsInput) => ({
         const nonce = BigNumber.from(nonceOption)
         if(!nonce) return "Must enter a valid nonce."
 
-        const decodedWord = getWordFromHash(nonce, address)
+        const decodedWord = getWordFromNonceAndAddress(nonce, address)
 
         if(decodedWord !== word) return "This nonce does not generate the word you are trying to claim."
 

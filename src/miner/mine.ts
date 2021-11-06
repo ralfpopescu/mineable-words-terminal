@@ -1,7 +1,6 @@
-import { solidityKeccak256 } from "ethers/lib/utils";
 import { BigNumber } from "@ethersproject/bignumber";
 import axios from 'axios'
-import { getWordFromHash, FoundWord } from '../utils/word-util'
+import { getWordFromNonceAndAddress, FoundWord } from '../utils/word-util'
 
 let cachedData: any;
 type Obj = { [key: string]: boolean }
@@ -23,19 +22,6 @@ export const getExistingWords = async (): Promise<Obj> => {
     return data.data;
 }
 
-export function hash(
-  address: BigNumber,
-  nonce: BigNumber
-): BigNumber {
-  const hash = solidityKeccak256(
-    ["uint160", "uint96"],
-    [address, nonce]
-  )
-
-  return BigNumber.from(hash);
-}
-
-
 export async function mine(
     _rangeStart: BigNumber,
     _rangeEnd: BigNumber,
@@ -46,9 +32,10 @@ export async function mine(
     const rangeEnd = BigNumber.from(_rangeEnd._hex);
     const address = BigNumber.from(_address._hex);
     const existingWords = lookingFor ? lookingFor : await getExistingWords();
+    console.log('how')
   
     for (let i = rangeStart; i.lt(rangeEnd); i = i.add(1)) {
-      const word = getWordFromHash(address, i)
+      const word = getWordFromNonceAndAddress(i, address)
 
       const wordExists = existingWords[word];
 

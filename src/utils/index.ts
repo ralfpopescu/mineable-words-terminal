@@ -28,7 +28,7 @@ export const assertValidOptions = (options: Obj, validOptions: string[]) => {
     return `Unrecognized option(s): ${invalid.map(inv => `-${inv}`).join(', ')}`
 }
 
-export const getQueryParamsFromSearch = (search: string): { [key: string] : string } => {
+export const getQueryParamsFromSearch = (search: string): { [key: string] : string | number } => {
     if(!search || !search.length) return {}
 
     const split = search.split('?')[1]
@@ -41,7 +41,7 @@ export const getQueryParamsFromSearch = (search: string): { [key: string] : stri
     }, {});
 }
 
-export const getNavigationPathFromParams = (params: { [key: string] : string }): string => {
+export const getNavigationPathFromParams = (params: { [key: string] : string | number }): string => {
     const keys = Object.keys(params);
     return keys.reduce((navPath: string, key: string, index: number) => {
         const value = params[key]
@@ -50,7 +50,7 @@ export const getNavigationPathFromParams = (params: { [key: string] : string }):
     }, '?')
 }
 
-export const addQueryParamsToNavPath = (params: { [key: string] : string }, search: string): string => {
+export const addQueryParamsToNavPath = (params: { [key: string] : string | number }, search: string): string => {
     const currentParams = getQueryParamsFromSearch(search);
     const newParams = { ...currentParams, ...params }
     return getNavigationPathFromParams(newParams);

@@ -98,7 +98,7 @@ export async function mine(
     const foundWords = [];
   
     for (let i = rangeStart; i.lt(rangeEnd); i = i.add(1)) {
-      const word = getWordFromHash(address, i)
+      const word = getWordFromHash(i, address)
 
       const wordExists = existingWords[word];
 

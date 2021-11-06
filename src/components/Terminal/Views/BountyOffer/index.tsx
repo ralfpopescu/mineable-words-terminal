@@ -6,6 +6,7 @@ import { MineableWords__factory } from '../../../../typechain'
 import { getHashFromWord } from '../../../../utils/word-util'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { getQueryParamsFromSearch, addQueryParamsToNavPath } from '../../../../utils'
+import { TxStatus } from "../../../../utils/statuses";
 
 const MINEABLEWORDS_ADDR = process.env.MINEABLEWORDS_ADDR || '0x5FbDB2315678afecb367f032d93F642f64180aa3'
 
@@ -35,14 +36,11 @@ type BounterOfferProps = { word: string, offer: number, bountyOfferId: string }
 
 export const BountyOffer = ({ word, offer, bountyOfferId }: BounterOfferProps) => {
     const { library, account } = useWeb3React<Web3Provider>();
-    const [hasCompleted, setHasCompleted] = useState(false)
-    const [error, setError] = useState();
     const [nonce, setNonce] = useState<ethers.BigNumber | null>(null);
     const location = useLocation();
     const navigate = useNavigate();
     const queryParams = getQueryParamsFromSearch(location.search)
-    const status = queryParams[bountyOfferId] || '2';
-    console.log({ status, queryParams })
+    const status = queryParams[bountyOfferId] || TxStatus.FAILED;
 
     useEffect(() => {
         const encodeWord = async () => {
@@ -58,24 +56,21 @@ export const BountyOffer = ({ word, offer, bountyOfferId }: BounterOfferProps) =
         const bountyOffer = async () => {
             if(account && nonce && status === '0') {
                 try {
-                    console.log('!!!', { nonce, offer, hasCompleted })
                     await attemptBountyOffer(library!, nonce, offer)
-                    navigate(addQueryParamsToNavPath({ [bountyOfferId] : '1'}, location.search));
-                    setHasCompleted(true);
+                    navigate(addQueryParamsToNavPath({ [bountyOfferId] : TxStatus.SUCCESS }, location.search));
                 } catch (e: any) {
-                    setError(e.message)
-                    navigate(addQueryParamsToNavPath({ [bountyOfferId] : '2'}, location.search));
+                    navigate(addQueryParamsToNavPath({ [bountyOfferId] : TxStatus.FAILED }, location.search));
                 }
             }
         }
         bountyOffer();
-    }, [account, nonce, hasCompleted, library, offer, status])
+    }, [account, nonce, library, offer, status, bountyOfferId, location, navigate])
 
   return (
     <div>
       Offering bounty of {offer} for mword {word}{nonce && ` -- ${nonce}`}...
-      {status === '1' && <div>Successfully offered bounty.</div>}
-      {status === '2' && <div>Denied transaction or otherwise encountered error.</div>}
+      {status === TxStatus.SUCCESS.toString() && <div>Successfully offered bounty.</div>}
+      {status === TxStatus.FAILED.toString() && <div>Denied transaction or otherwise encountered error.</div>}
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import { MineableWords__factory } from '../../../../typechain'
-import { getWordFromHash } from '../../../../utils/word-util'
+import { getWordFromNonceAndAddress } from '../../../../utils/word-util'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { getQueryParamsFromSearch, addQueryParamsToNavPath } from '../../../../utils'
 
@@ -63,7 +63,7 @@ export const Mint = ({ nonce, mintId }: MintProps) => {
 
   return (
     <div>
-      Minting mword {getWordFromHash(nonce, ethers.BigNumber.from(account))} -- {nonce._hex} 
+      Minting mword {getWordFromNonceAndAddress(nonce, ethers.BigNumber.from(account))} -- {nonce._hex} 
       {status === '1' && <div>Successfully minted.</div>}
       {status === '2' && <div>Encountered error. {error}</div>}
     </div>
