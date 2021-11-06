@@ -4,6 +4,8 @@ import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import { MineableWords__factory } from '../../../../typechain'
 import { getWordFromHash } from '../../../../utils/word-util'
+import { useLocation } from 'react-router-dom'
+import { getQueryParamsFromSearch } from '../../../../utils'
 
 const MINEABLEWORDS_ADDR = process.env.MINEABLEWORDS_ADDR || '0x5FbDB2315678afecb367f032d93F642f64180aa3'
 
@@ -27,19 +29,20 @@ export const attemptMint = async function (
     }
   };
 
-type MintProps = { nonce: ethers.BigNumber }
+type MintProps = { nonce: ethers.BigNumber, mintId: string }
 
-export const Mint = ({ nonce }: MintProps) => {
+export const Mint = ({ nonce, mintId }: MintProps) => {
     const { library, account } = useWeb3React<Web3Provider>();
-    const [hasCompleted, setHasCompleted] = useState(false)
     const [error, setError] = useState()
+    const location = useLocation();
+    const queryParams = getQueryParamsFromSearch(location.search)
+    const status = queryParams[mintId];
 
     useEffect(() => {
         const mint = async () => {
-            if(account && !hasCompleted && !error) {
+            if(account && status === '0') {
                 try {
                     await attemptMint(library!, nonce)
-                    setHasCompleted(true);
                 } catch (e: any) {
                     setError(e.message)
                 }

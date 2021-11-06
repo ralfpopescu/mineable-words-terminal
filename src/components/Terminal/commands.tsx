@@ -151,7 +151,11 @@ export const commands = ({ account, location, navigate }: CommandsInput) => ({
         const stringNonce = options[0]
         const nonce = BigNumber.from(stringNonce)
 
-        return <Mint nonce={nonce}/>
+        const mintId = `mintId-${generateNonce(12)}`;
+
+        navigate(concatQueryParams(location.search, `${mintId}=0`));
+
+        return <Mint nonce={nonce} mintId={mintId} />
     },
     found: () => <FoundWords />,
     "safe-mint": "Safe minting...",
