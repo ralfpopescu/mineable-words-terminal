@@ -4,6 +4,8 @@ import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import { MineableWords__factory } from '../../../../typechain'
 import { getHashFromWord } from '../../../../utils/word-util'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { getQueryParamsFromSearch, addQueryParamsToNavPath } from '../../../../utils'
 
 const MINEABLEWORDS_ADDR = process.env.MINEABLEWORDS_ADDR || '0x5FbDB2315678afecb367f032d93F642f64180aa3'
 
@@ -29,13 +31,18 @@ export const attemptBountyOffer = async function (
     }
   };
 
-type BounterOfferProps = { word: string, offer: number }
+type BounterOfferProps = { word: string, offer: number, bountyOfferId: string }
 
-export const BountyOffer = ({ word, offer }: BounterOfferProps) => {
+export const BountyOffer = ({ word, offer, bountyOfferId }: BounterOfferProps) => {
     const { library, account } = useWeb3React<Web3Provider>();
     const [hasCompleted, setHasCompleted] = useState(false)
     const [error, setError] = useState();
     const [nonce, setNonce] = useState<ethers.BigNumber | null>(null);
+    const location = useLocation();
+    const navigate = useNavigate();
+    const queryParams = getQueryParamsFromSearch(location.search)
+    const status = queryParams[bountyOfferId] || '2';
+    console.log({ status, queryParams })
 
     useEffect(() => {
         const encodeWord = async () => {
@@ -49,24 +56,26 @@ export const BountyOffer = ({ word, offer }: BounterOfferProps) => {
 
     useEffect(() => {
         const bountyOffer = async () => {
-            if(account && !hasCompleted && nonce) {
+            if(account && nonce && status === '0') {
                 try {
                     console.log('!!!', { nonce, offer, hasCompleted })
                     await attemptBountyOffer(library!, nonce, offer)
+                    navigate(addQueryParamsToNavPath({ [bountyOfferId] : '1'}, location.search));
                     setHasCompleted(true);
                 } catch (e: any) {
                     setError(e.message)
+                    navigate(addQueryParamsToNavPath({ [bountyOfferId] : '2'}, location.search));
                 }
             }
         }
         bountyOffer();
-    }, [account, nonce, hasCompleted, library, offer])
+    }, [account, nonce, hasCompleted, library, offer, status])
 
   return (
     <div>
       Offering bounty of {offer} for mword {word}{nonce && ` -- ${nonce}`}...
-      {hasCompleted && <div>Successfully offered bounty.</div>}
-      {error && <div>Encountered error: {error}</div>}
+      {status === '1' && <div>Successfully offered bounty.</div>}
+      {status === '2' && <div>Denied transaction or otherwise encountered error.</div>}
     </div>
   );
 };

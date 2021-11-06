@@ -180,8 +180,6 @@ export const commands = ({ account, location, navigate }: CommandsInput) => ({
 
         const mintId = `mintId-${generateNonce(12)}`;
         const concat = concatQueryParams(location.search, `${mintId}=0`)
-        console.log({ concat })
-
         navigate(concat);
 
         return <Mint nonce={nonce} mintId={mintId} />
@@ -218,7 +216,12 @@ export const commands = ({ account, location, navigate }: CommandsInput) => ({
         const parsedOffer = parseFloat(offer);
         if(!parsedOffer) return "Must offer a valid, positive amount of eth."
 
-        return <BountyOffer word={word} offer={parsedOffer} />
+        const bountyOfferId = `bountyOfferId-${generateNonce(12)}`;
+        const concat = concatQueryParams(location.search, `${bountyOfferId}=0`)
+        console.log('bountyofferconat', concat)
+        navigate(concat);
+
+        return <BountyOffer word={word} offer={parsedOffer} bountyOfferId={bountyOfferId} />
     },
   });
 
