@@ -42,7 +42,7 @@ export const Mint = ({ nonce, mintId }: MintProps) => {
 
     useEffect(() => {
         const mint = async () => {
-            if(account && status === '0') {
+            if(account && status === TxStatus.INITIATED.toString()) {
                 try {
                     await attemptMint(library!, nonce)
                     navigate(addQueryParamsToNavPath({ [mintId] : TxStatus.SUCCESS }, location.search));
@@ -58,7 +58,8 @@ export const Mint = ({ nonce, mintId }: MintProps) => {
 
   return (
     <div>
-      Minting mword {getWordFromNonceAndAddress(nonce, ethers.BigNumber.from(account))} -- {nonce._hex} 
+        {console.log({ account })}
+      Minting mword {getWordFromNonceAndAddress({ nonce, address: ethers.BigNumber.from(account)})} -- {nonce._hex} 
       {status === TxStatus.SUCCESS.toString() && <div>Successfully minted.</div>}
       {status === TxStatus.FAILED.toString() && <div>Denied transaction or otherwise encountered error.</div>}
     </div>

@@ -34,14 +34,14 @@ export async function mine(
     const existingWords = lookingFor ? lookingFor : await getExistingWords();
     console.log('how')
   
-    for (let i = rangeStart; i.lt(rangeEnd); i = i.add(1)) {
-      const word = getWordFromNonceAndAddress(i, address)
+    for (let nonce = rangeStart; nonce.lt(rangeEnd); nonce = nonce.add(1)) {
+      const word = getWordFromNonceAndAddress({ nonce, address})
 
       const wordExists = existingWords[word];
 
       if(wordExists && word.length > 5) {
-        return { word, i, isValid: true }
+        return { word, nonce, isValid: true }
       };
     }
-    return { word: '', i : BigNumber.from(0), isValid: false }
+    return { word: '', nonce : BigNumber.from(0), isValid: false }
   }

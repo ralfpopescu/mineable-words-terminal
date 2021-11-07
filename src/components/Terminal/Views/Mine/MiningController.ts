@@ -71,7 +71,7 @@ export default class MiningController {
           worker.mine(
             rangeLength.mul(workerIndex).add(rangeBegin).add(this.args.startingNonce || 0),
             rangeLength.mul(workerIndex).add(rangeBegin).add(this.args.startingNonce || 0).add(notificationRate),
-            BigNumber.from(123),
+            BigNumber.from(this.args.address),
             lookingForMap,
           )
         );

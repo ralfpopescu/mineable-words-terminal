@@ -173,10 +173,26 @@ export const commands = ({ account, location, navigate }: CommandsInput) => ({
 
         const options = splitOnSpaces(input);
 
-        if(options.length !== 1) return "Must enter a single nonce."
+        if(options.length !== 1) return "Must enter a single nonce or word."
 
-        const stringNonce = options[0]
-        const nonce = BigNumber.from(stringNonce)
+        const entry: string = options[0]
+        let nonce;
+
+        try {
+            nonce = BigNumber.from(entry);
+        } catch (e) {
+            const foundStorage = localStorage.getItem('found');
+            if(foundStorage) {
+                try {
+                    const parsed = JSON.parse(foundStorage);
+                    nonce = BigNumber.from(parsed[entry]);
+                } catch (e) {
+                    console.log('Failed to parse local storage', e)
+                }
+            }
+        } finally {
+            if(!nonce) return 'You have entered neither a valid nonce, nor a word you have found.'
+        }
 
         const mintId = `mintId-${generateNonce(12)}`;
         const concat = concatQueryParams(location.search, `${mintId}=0`)
@@ -197,7 +213,7 @@ export const commands = ({ account, location, navigate }: CommandsInput) => ({
         const nonce = BigNumber.from(nonceOption)
         if(!nonce) return "Must enter a valid nonce."
 
-        const decodedWord = getWordFromNonceAndAddress(nonce, address)
+        const decodedWord = getWordFromNonceAndAddress({ nonce, address })
 
         if(decodedWord !== word) return "This nonce does not generate the word you are trying to claim."
 

@@ -31,7 +31,7 @@ flex-direction: column;
 
 const WordAndNonce = ({ word, nonce }: { word: string, nonce: BigNumber }) => <div>{word} --- nonce: {nonce._hex}</div>
 
-const flatten = (arr: FoundWord[]) => arr.reduce((acc, curr) => ({ ...acc, [curr.word]: curr.i._hex }), {})
+const flatten = (arr: FoundWord[]) => arr.reduce((acc, curr) => ({ ...acc, [curr.word]: curr.nonce._hex }), {})
 
 export const Mine = ({ initialOffset, lookingFor, workerCount, minerId} : MineProps) => {
     const { library, account } = useWeb3React<Web3Provider>();
@@ -107,7 +107,7 @@ export const Mine = ({ initialOffset, lookingFor, workerCount, minerId} : MinePr
 
   if(miningStatus === MiningStatus.STOPPED) return (
     <Column>
-        <div>{foundWords.map(fw => <WordAndNonce word={fw.word} nonce={fw.i} />)}</div>
+        <div>{foundWords.map(fw => <WordAndNonce word={fw.word} nonce={fw.nonce} />)}</div>
         <div>Miner stopped. Type "found" to see words you have found.</div>
     </Column>
   )
@@ -121,7 +121,9 @@ export const Mine = ({ initialOffset, lookingFor, workerCount, minerId} : MinePr
             }} />
         {hashRate ? <div>Mining mwords{'.'.repeat(ellipses)}</div> : <div>Starting up the miner...</div>}
         {<div>Hash rate: ~{hashRate || '???'} h/s</div>}
-        <div>{foundWords.map(fw => <WordAndNonce word={fw.word} nonce={fw.i} />)}</div>
+        <div>{foundWords.map(fw => 
+        //@ts-ignore
+            console.log({ fw }) || <WordAndNonce word={fw.word} nonce={fw.nonce} />)}</div>
     </Column>
     )
 }

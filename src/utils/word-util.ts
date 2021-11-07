@@ -12,16 +12,13 @@ export const generateNonce = (length: number) => {
    return nonce;
 }
 
+type HashInput = { address: BigNumber, nonce: BigNumber }
 
-export function hash(
-    address: BigNumber,
-    nonce: BigNumber
-  ): BigNumber {
+export const hash = ({ address, nonce }: HashInput): BigNumber => {
     const hash = solidityKeccak256(
       ["uint160", "uint96"],
       [address, nonce]
     )
-  
     return BigNumber.from(hash);
   }
 
@@ -84,11 +81,11 @@ export const getLetterFromNumber = (index: number) => {
      return number;
   }
   
-  export type FoundWord = { word: string, i: BigNumber, isValid: boolean }
+  export type FoundWord = { word: string, nonce: BigNumber, isValid: boolean }
   
-  export const getWordFromNonceAndAddress = (nonce: BigNumber, _address: BigNumber) => {
+  export const getWordFromNonceAndAddress = ({ nonce, address: _address }: HashInput) => {
     const address = BigNumber.from(_address._hex);
-    const attempt = hash(address, nonce);
+    const attempt = toUint96(hash({ address, nonce }));
     const numberOfLetters = getWordLengthFromHash(attempt)
   
     return new Array(numberOfLetters).fill(null)
@@ -96,10 +93,11 @@ export const getLetterFromNumber = (index: number) => {
   }
 
   export const getWordFromHash = (hash: BigNumber) => {
-    const numberOfLetters = getWordLengthFromHash(hash)
-  
+    const uint96 = toUint96(hash);
+    const numberOfLetters = getWordLengthFromHash(uint96)
+
     return new Array(numberOfLetters).fill(null)
-    .map((_, i) => getLetterFromHash(hash, i)).join(''); 
+    .map((_, i) => getLetterFromHash(uint96, i)).join(''); 
   }
 
   const getLengthBits = (length: number) => BigNumber.from(length).shl(92);
@@ -114,8 +112,6 @@ export const getLetterFromNumber = (index: number) => {
       const char = word.charAt(i);
       const letterNumber = letterToBigNumber[char];
       const shifted = letterNumber.shl(i * 5);
-      console.log({ char, letterNumber, shifted })
-
       sum = sum.add(shifted)
     }
     return sum;
