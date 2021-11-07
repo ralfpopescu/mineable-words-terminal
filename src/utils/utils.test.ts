@@ -24,11 +24,11 @@ test('get word from hash', () => {
     expect(word).toBe('abc')
 })
 
-// test('bingo', () => {
-//     const nonce = BigNumber.from('0x3d5ad800089945');
-//     const hashed = hash({ address, nonce })
-//     expect(hashed._hex).toBe('0xb8217be979510f2200d729e54f7ef27ce48fbaa654fcca64cbdfc151c2e33501')
-//     const bingo = getWordFromHash(hashed)
-//     expect(bingo).toBe('bingobhkb&xx')
-// })
+test('borax', () => {
+    const nonce = BigNumber.from('0x5235');
+    const hashed = hash({ address, nonce })
+    expect(hashed._hex).toBe('0x3307dbe6e0190d8fec56ae48e7983f07c664ce2fa650ba20be2affd6105c0e95')
+    const borax = getWordFromHash(hashed)
+    expect(borax).toBe('borax')
+})
 
