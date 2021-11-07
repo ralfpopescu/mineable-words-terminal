@@ -16,7 +16,7 @@ import { randomBytes } from "@ethersproject/random";
 import { generateNonce } from '../../utils/word-util'
 import { assertValidOptions, getOptions, getQueryParamsFromSearch, getNavigationPathFromParams, concatQueryParams } from '../../utils'
 import { Location, NavigateFunction } from 'react-router-dom';
-import { CommandWrapper } from './command-wrapper';
+import { wrapInErrorWrapper } from './command-wrapper';
 
 const splitOnSpaces = (input: string) => input.split(/\s+/);
 
@@ -43,14 +43,7 @@ const getWordsFromOptions = (input: string): string[] | null => {
     }
 }
 
-const wrapCommandsInWrapper = (commands: { [key: string] : (args: string) => any }) => {
-    const commandNames = Object.keys(commands);
-    return commandNames.map(commandName => (
-        { [commandName]: CommandWrapper(commands[commandName]) })
-        ).reduce((acc, curr) => ({ ...acc, ...curr }))
-}
-
-export const commands = ({ account, location, navigate }: CommandsInput) => wrapCommandsInWrapper({
+export const commands = ({ account, location, navigate }: CommandsInput) => wrapInErrorWrapper({
     help: () => <Help />,
     faq: () => <FAQ />,
     recent: () => <RecentlyMined />,

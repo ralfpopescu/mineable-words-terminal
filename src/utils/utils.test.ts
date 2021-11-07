@@ -5,7 +5,7 @@ const address = BigNumber.from('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
 
 const abc = '0x3004400000000000000000';
 
-test('test hash is right length', () => {
+test('correct length hash', () => {
     expect(abc.length).toBe(24);
 })
 
