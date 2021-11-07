@@ -90,6 +90,7 @@ function getClientEnvironment(publicUrl) {
         // which is why it's disabled by default.
         // It is defined here so it is available in the webpackHotDevClient.
         FAST_REFRESH: process.env.FAST_REFRESH !== 'false',
+        REACT_APP_MINEABLE_WORDS_ADDRESS: process.env.REACT_APP_MINEABLE_WORDS_ADDRESS || "0x5FbDB2315678afecb367f032d93F642f64180aa3"
       }
     );
   // Stringify all values so we can feed into webpack DefinePlugin

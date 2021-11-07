@@ -73,7 +73,7 @@ export const toUint88 = (num: BigNumber) => {
   
   export const getLetterFromHash = (hash: BigNumber, letterIndex: number) => {
     const uint88 = toUint88(hash);
-    const shiftAmount = 84 - ((letterIndex + 1) * 5)
+    const shiftAmount = 80 - ((letterIndex + 1) * 5)
     const masked = uint88.shr(shiftAmount).and(BigNumber.from('0x1f'))
     const number = BigNumber.from(masked._hex).toNumber();
     return getLetterFromNumber(number);
@@ -82,8 +82,8 @@ export const toUint88 = (num: BigNumber) => {
   export const getWordLengthFromHash = (wordHash: BigNumber) => {
     const hash88 = toUint88(wordHash)
     //leading 4 bits
-     const number = BigNumber.from(`0x${hash88.toHexString().charAt(2)}`).toNumber();
-     return number;
+     const number = BigNumber.from(`0x${hash88.toHexString().charAt(3)}`).toNumber();
+     return number + 1;
   }
   
   export type FoundWord = { word: string, nonce: BigNumber, isValid: boolean }
@@ -105,7 +105,7 @@ export const toUint88 = (num: BigNumber) => {
     .map((_, i) => getLetterFromHash(uint88, i)).join(''); 
   }
 
-  const getLengthBits = (length: number) => BigNumber.from(length).shl(84);
+  const getLengthBits = (length: number) => BigNumber.from(length - 1).shl(80);
   
   export const getHashFromWord = (word: string): BigNumber => {
     const length = word.length;
@@ -116,7 +116,7 @@ export const toUint88 = (num: BigNumber) => {
     for(let i = 0; i < word.length; i += 1) {
       const char = word.charAt(i);
       const letterNumber = letterToBigNumber[char];
-      const shifted = letterNumber.shl(84 - ((i + 1) * 5));
+      const shifted = letterNumber.shl(80 - ((i + 1) * 5));
       sum = sum.add(shifted)
     }
     return sum;

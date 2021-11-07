@@ -2,10 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Web3ReactProvider } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
-
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+
+import dotenv from 'dotenv'
+dotenv.config()
 
 
 function getLibrary(provider: any): Web3Provider {

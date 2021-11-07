@@ -10,6 +10,8 @@ import { TxStatus } from "../../../../utils/statuses";
 
 const MINEABLEWORDS_ADDR = process.env.REACT_APP_MINEABLE_WORDS_ADDRESS || '0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e'
 
+console.log('mint', { MINEABLEWORDS_ADDR })
+
 export const attemptMint = async function (
     lib: Web3Provider,
     nonce: ethers.BigNumber,
