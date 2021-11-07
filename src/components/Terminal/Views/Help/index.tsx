@@ -1,4 +1,5 @@
-const Line = () => <span>-------------</span>
+import { Line } from '../../../Line'
+
 const Command = ({ children }: any) => <span style={{ color: 'yellow' }}>{children}</span>
 
 export const Help = () => (
