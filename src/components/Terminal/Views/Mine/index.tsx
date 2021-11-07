@@ -30,6 +30,17 @@ display: flex;
 flex-direction: column;
 `
 
+const Row = styled.div`
+display: flex;
+flex-direction: row;
+`
+
+const getFoundMessage = (foundWords: any[]) => {
+    if(foundWords.length === 0) return `You haven't found any words yet in this mining session. Use command "found" to see words from past sessions.`
+    if(foundWords.length === 1) return `You have found a word this session. Use command "found" to see it.`
+    return `You have found ${foundWords.length} words this session. Use command "found" to see all words you have found.`
+}
+
 const WordAndNonce = ({ word, nonce }: { word: string, nonce: BigNumber }) => <div>{word} --- nonce: {nonce._hex}</div>
 
 const flatten = (arr: FoundWord[]) => arr.reduce((acc, curr) => ({ ...acc, [curr.word]: curr.nonce._hex }), {})
@@ -123,9 +134,10 @@ export const Mine = ({ initialOffset, lookingFor, workerCount, minerId} : MinePr
             }} />
         {hashRate ? <div>Mining mwords{'.'.repeat(ellipses)}</div> : <div>Starting up the miner...</div>}
         {<div>Hash rate: ~{hashRate || '???'} h/s</div>}
-        <div>{foundWords.map(fw => 
-        //@ts-ignore
-            console.log({ fw }) || <WordAndNonce word={fw.word} nonce={fw.nonce} />)}</div>
+       {getFoundMessage(foundWords)}
+        <Row><div style={{ marginRight: '8px' }}>Most recent word:</div>{foundWords.length ? 
+            <WordAndNonce word={foundWords[foundWords.length - 1].word} nonce={foundWords[foundWords.length - 1].nonce} />: "-----"}
+        </Row>
     </Column>
     )
 }
