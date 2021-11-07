@@ -1,7 +1,7 @@
 const errorWrapper = (command: (args: string) => any) => (args: string) => {
     try {
         return command(args)
-    } catch(e) {
+    } catch(e: any) {
     return `Error encountered: ${e.message}`}
 }
 
