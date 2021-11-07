@@ -13,14 +13,15 @@ export const RecentlyMined = () => {
 
     useEffect(() => {
         const getMWords = async () => {
-            if(library) {
+            if(library && !recentlyMined.length) {
                 const mwords = await getAllDecodedMWords({ library })
                 setRecentlyMined(mwords)
             }
         };
 
         getMWords();
-    },[library])
+    },[library, recentlyMined])
+
     return (
     <Container>
     {recentlyMined.length ? recentlyMined.join(', ') : 'No mwords yet.'}

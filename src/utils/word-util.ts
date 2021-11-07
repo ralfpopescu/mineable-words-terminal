@@ -1,5 +1,6 @@
 import { solidityKeccak256 } from "ethers/lib/utils";
 import { BigNumber } from "@ethersproject/bignumber";
+import * as ethers from "ethers";
 
 export const generateNonce = (length: number) => {
     const result = [];
@@ -63,21 +64,25 @@ export const getLetterFromNumber = (index: number) => {
     '&': BigNumber.from(30), 
     '?': BigNumber.from(31),
   }
+
+export const toUint88 = (num: BigNumber) => {
+    const numberOfBits = 88;
+    const mask = BigNumber.from(`0x${'f'.repeat(numberOfBits / 4)}`);
+    return BigNumber.from(ethers.utils.hexZeroPad(num.and(mask).toHexString(), 22));
+  }
   
   export const getLetterFromHash = (hash: BigNumber, letterIndex: number) => {
-    const masked = hash.shr(letterIndex * 5).and(BigNumber.from('0x1f'))
+    const uint88 = toUint88(hash);
+    const shiftAmount = 84 - ((letterIndex + 1) * 5)
+    const masked = uint88.shr(shiftAmount).and(BigNumber.from('0x1f'))
     const number = BigNumber.from(masked._hex).toNumber();
     return getLetterFromNumber(number);
   }
-
-  export const toUint96 = (num: BigNumber) => {
-    const mask = BigNumber.from('0xffffffffffffffffffffffff');
-    return num.and(mask);
-  }
   
   export const getWordLengthFromHash = (wordHash: BigNumber) => {
-    const hash96 = toUint96(wordHash)
-     const number = BigNumber.from(hash96.toHexString().slice(0, 3)).toNumber();
+    const hash88 = toUint88(wordHash)
+    //leading 4 bits
+     const number = BigNumber.from(`0x${hash88.toHexString().charAt(2)}`).toNumber();
      return number;
   }
   
@@ -85,7 +90,7 @@ export const getLetterFromNumber = (index: number) => {
   
   export const getWordFromNonceAndAddress = ({ nonce, address: _address }: HashInput) => {
     const address = BigNumber.from(_address._hex);
-    const attempt = toUint96(hash({ address, nonce }));
+    const attempt = toUint88(hash({ address, nonce }));
     const numberOfLetters = getWordLengthFromHash(attempt)
   
     return new Array(numberOfLetters).fill(null)
@@ -93,14 +98,14 @@ export const getLetterFromNumber = (index: number) => {
   }
 
   export const getWordFromHash = (hash: BigNumber) => {
-    const uint96 = toUint96(hash);
-    const numberOfLetters = getWordLengthFromHash(uint96)
+    const uint88 = toUint88(hash);
+    const numberOfLetters = getWordLengthFromHash(uint88)
 
     return new Array(numberOfLetters).fill(null)
-    .map((_, i) => getLetterFromHash(uint96, i)).join(''); 
+    .map((_, i) => getLetterFromHash(uint88, i)).join(''); 
   }
 
-  const getLengthBits = (length: number) => BigNumber.from(length).shl(92);
+  const getLengthBits = (length: number) => BigNumber.from(length).shl(84);
   
   export const getHashFromWord = (word: string): BigNumber => {
     const length = word.length;
@@ -111,7 +116,7 @@ export const getLetterFromNumber = (index: number) => {
     for(let i = 0; i < word.length; i += 1) {
       const char = word.charAt(i);
       const letterNumber = letterToBigNumber[char];
-      const shifted = letterNumber.shl(i * 5);
+      const shifted = letterNumber.shl(84 - ((i + 1) * 5));
       sum = sum.add(shifted)
     }
     return sum;

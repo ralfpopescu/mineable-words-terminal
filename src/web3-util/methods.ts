@@ -1,7 +1,7 @@
 import { MineableWords__factory } from '../typechain'
 import * as ethers from "ethers";
 
-const MINEABLEWORDS_ADDR = process.env.MINEABLEWORDS_ADDR || '0x5FbDB2315678afecb367f032d93F642f64180aa3'
+const MINEABLEWORDS_ADDR = process.env.REACT_APP_MINEABLE_WORDS_ADDRESS || '0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e'
 
 export const generateNonce = (length: number) => {
     const result = [];
@@ -37,6 +37,7 @@ export const encodeMWord = async ({ library, word }: EncodeMWordInput): Promise<
 export const getAllMWords = async ({ library }: LibraryInput) => {
     const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, library);
     const totalSupply = await contract.totalSupply();
+    console.log({ totalSupply })
     const mwords = [];
     for(let i = 0; i < totalSupply.toNumber(); i += 1) {
         const mword = await contract.tokenByIndex(i);

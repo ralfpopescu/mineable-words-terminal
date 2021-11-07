@@ -20,7 +20,7 @@ import { MineableWords__factory } from '../../typechain'
 
 const splitOnSpaces = (input: string) => input.split(/\s+/);
 
-const MINEABLEWORDS_ADDR = process.env.MINEABLEWORDS_ADDR || '0x5FbDB2315678afecb367f032d93F642f64180aa3'
+const MINEABLEWORDS_ADDR = process.env.REACT_APP_MINEABLE_WORDS_ADDRESS || '0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e'
 
 export const attemptMint = async function (
     lib: Web3Provider,

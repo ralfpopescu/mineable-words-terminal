@@ -5,8 +5,6 @@ display: flex;
 flex-direction: column;
 `
 
-
-
 export const FoundWords = () => {
     const foundWords = localStorage.getItem('found');
     const parsed = foundWords ? JSON.parse(foundWords) : {}
