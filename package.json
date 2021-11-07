@@ -92,6 +92,7 @@
     "build": "node scripts/build.js",
     "build-script": "node scripts/build.js",
     "test-jest": "jest",
+    "lint": "eslint ./src",
     "test": "node scripts/test.js"
   },
   "eslintConfig": {

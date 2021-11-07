@@ -4,7 +4,7 @@ import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import { MineableWords__factory } from '../../../../typechain'
 import { getHashFromWord } from '../../../../utils/word-util'
-import { useLocation, useNavigate, NavigateFunction } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { getQueryParamsFromSearch, addQueryParamsToNavPath } from '../../../../utils'
 import { BountyClaimStatus } from "../../../../utils/statuses";
 
