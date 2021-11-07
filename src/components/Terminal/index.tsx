@@ -5,7 +5,6 @@ import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import { getCommands } from './commands'
 
-
 const welcomeMessage = `Welcome to MineableWords (MWORDS). Enter "help" to get started.
 `
 export const Terminal = () => {

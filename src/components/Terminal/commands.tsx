@@ -1,48 +1,23 @@
-import { FAQ } from './Views/FAQ'
-import { RecentlyMined } from './Views/RecentlyMined'
-import { Mine } from './Views/Mine'
-import { Help } from './Views/Help'
-import { Links } from './Views/Links'
-import { Info } from './Views/Info'
-import { Connect } from './Views/Connect'
-import { Mint } from './Views/Mint'
-import { BountyOffer } from './Views/BountyOffer'
-import { Calculations } from './Views/Calculations'
-import { FoundWords } from './Views/FoundWords'
+import { 
+    BountyClaim,
+    BountyOffer,
+    Calculations,
+    Connect,
+    FAQ,
+    FoundWords,
+    Help,
+    Info,
+    Links,
+    Mine,
+    Mint,
+    RecentlyMined, } from './Views'
 import { BigNumber } from "@ethersproject/bignumber";
 import { randomBytes } from "@ethersproject/random";
 import { getWordFromNonceAndAddress, generateNonce } from '../../utils/word-util'
 import { assertValidOptions, getOptions, getQueryParamsFromSearch, getNavigationPathFromParams, concatQueryParams } from '../../utils'
 import { Location, NavigateFunction } from 'react-router-dom';
-import { Web3Provider } from "@ethersproject/providers";
-import * as ethers from "ethers";
-import { MineableWords__factory } from '../../typechain'
 
 const splitOnSpaces = (input: string) => input.split(/\s+/);
-
-const MINEABLEWORDS_ADDR = process.env.REACT_APP_MINEABLE_WORDS_ADDRESS || '0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e'
-
-export const attemptMint = async function (
-    lib: Web3Provider,
-    nonce: ethers.BigNumber,
-  ): Promise<string> {
-    const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, lib);
-    try {
-      const signer = lib.getSigner();
-    //   const numMined = await contract.numMined();
-        const numMined = 100;
-      const tx = await contract.connect(signer).mint(nonce.toHexString(), {
-        gasLimit: (numMined + 1) % 33 === 0 ? 1400000 : 700000,
-      });
-      return tx.hash;
-    } catch (e: any) {
-      const message: string = e.message;
-        console.log(message)
-      throw e;
-    }
-  };
-
-const address = BigNumber.from(123);
 
 type CommandsInput = {
     account: string | null | undefined;
@@ -166,8 +141,6 @@ export const commands = ({ account, location, navigate }: CommandsInput) => ({
         minerId={minerId}
         />
     },
-    //@ts-ignore
-    test: () => console.log('hi') || <div>hi</div>,
     mint: (input: string) => {
         if(!account) return <div>Need to connect account to mint.</div>
 
@@ -201,23 +174,20 @@ export const commands = ({ account, location, navigate }: CommandsInput) => ({
         return <Mint nonce={nonce} mintId={mintId} />
     },
     found: () => <FoundWords />,
-    "safe-mint": "Safe minting...",
     "bounty-claim": (input: string) => {
+        if(!account) return <div>Need to connect account to mint.</div>
+
         const options = splitOnSpaces(input);
 
-        if(options.length !== 2) return "Must enter a word that has a bounty and a nonce to submit."
+        if(options.length !== 2) return "Must enter an mword that has a bounty and that you own."
 
         const word = options[0];
-        const nonceOption = options[1];
 
-        const nonce = BigNumber.from(nonceOption)
-        if(!nonce) return "Must enter a valid nonce."
+        const bountyClaimId = `bountyClaimId-${generateNonce(12)}`;
+        const concat = concatQueryParams(location.search, `${bountyClaimId}=0`)
+        navigate(concat);
 
-        const decodedWord = getWordFromNonceAndAddress({ nonce, address })
-
-        if(decodedWord !== word) return "This nonce does not generate the word you are trying to claim."
-
-        return `This process takes two transactions to ensure no one can snipe your bounty. Proceed? y/n`
+        return <BountyClaim word={word} bountyClaimId={bountyClaimId} />
     },
     "bounty-offer": (input: string) => {
         if(!account) return <div>Need to connect account to offer a bounty.</div>

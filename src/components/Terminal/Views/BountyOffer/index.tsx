@@ -54,7 +54,7 @@ export const BountyOffer = ({ word, offer, bountyOfferId }: BounterOfferProps) =
 
     useEffect(() => {
         const bountyOffer = async () => {
-            if(account && nonce && status === '0') {
+            if(account && nonce && status === TxStatus.INITIATED.toString()) {
                 try {
                     await attemptBountyOffer(library!, nonce, offer)
                     navigate(addQueryParamsToNavPath({ [bountyOfferId] : TxStatus.SUCCESS }, location.search));

@@ -10,3 +10,10 @@ export enum TxStatus {
     SUCCESS,
     FAILED,
 }
+
+export enum BountyClaimStatus {
+    INITIATED,
+    SUCCESS,
+    FAILED,
+    NOT_OWNER,
+}
