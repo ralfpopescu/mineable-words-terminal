@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { useState, useEffect } from 'react'
 import styled from 'styled-components';
 import ReactInterval from 'react-interval';
@@ -103,6 +104,7 @@ export const Mine = ({ initialOffset, lookingFor, workerCount, minerId} : MinePr
         setMiningController(null)
         setHashRate(0);
     };
+    //eslint-ignore-
   }, [miningStatus]);
 
   if(miningStatus === MiningStatus.STOPPED) return (
