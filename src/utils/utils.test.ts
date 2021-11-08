@@ -1,4 +1,4 @@
-import { getWordFromHash, getHashFromWord, getWordLengthFromHash, hash } from './word-util'
+import { getWordFromHash, getHashFromWord, getWordLengthFromHash, hash, toUint88 } from './word-util'
 import { BigNumber } from 'ethers'
 
 const address = BigNumber.from('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
@@ -24,11 +24,16 @@ test('get word from hash', () => {
     expect(word).toBe('abc')
 })
 
-test('borax', () => {
-    const nonce = BigNumber.from('0x5235');
+test('uint88', () => {
+    const uint88 = toUint88(BigNumber.from('0xf45ca3e1b761bd570f32221b1cfd33979e20d68ca4442b8c4c125d6854e31a69'));
+    expect(uint88.toHexString()).toBe('0x442b8c4c125d6854e31a69')
+})
+
+test('fogey', () => {
+    const nonce = BigNumber.from('0x3d5ad800088575');
     const hashed = hash({ address, nonce })
-    expect(hashed._hex).toBe('0x3307dbe6e0190d8fec56ae48e7983f07c664ce2fa650ba20be2affd6105c0e95')
-    const borax = getWordFromHash(hashed)
-    expect(borax).toBe('borax')
+    expect(hashed._hex).toBe('0xf45ca3e1b761bd570f32221b1cfd33979e20d68ca4442b8c4c125d6854e31a69')
+    const fogey = getWordFromHash(hashed)
+    expect(fogey).toBe('fogey')
 })
 

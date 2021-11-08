@@ -14,13 +14,14 @@ console.log({ MINEABLEWORDS_ADDR, env: process.env })
 
 export const isOwner = async function (
     lib: Web3Provider,
-    nonce: ethers.BigNumber,
+    encodedWord: ethers.BigNumber,
+    account: string,
   ): Promise<boolean> {
     const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, lib);
     try {
-      const signer = lib.getSigner();
-      const owner = await contract.ownerOf(nonce);
-      return owner === signer._address;
+      const owner = await contract.ownerOf(encodedWord);
+      console.log({ owner, account })
+      return owner === account;
     } catch (e: any) {
       const message: string = e.message;
         console.log(message)
@@ -30,13 +31,13 @@ export const isOwner = async function (
 
 export const attemptBountyClaim = async function (
     lib: Web3Provider,
-    nonce: ethers.BigNumber,
+    encodedWord: ethers.BigNumber,
   ): Promise<string> {
     const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, lib);
     try {
       const signer = lib.getSigner();
       const numMined = await (await contract.totalSupply()).toNumber();
-      const tx = await contract.connect(signer).mint(nonce.toHexString(), {
+      const tx = await contract.connect(signer).claimBounty(encodedWord, {
         gasLimit: (numMined + 1) % 33 === 0 ? 1400000 : 700000,
       });
       return tx.hash;
@@ -51,29 +52,19 @@ type BounterOfferProps = { word: string, bountyClaimId: string }
 
 export const BountyClaim = ({ word, bountyClaimId }: BounterOfferProps) => {
     const { library, account } = useWeb3React<Web3Provider>();
-    const [nonce, setNonce] = useState<ethers.BigNumber | null>(null);
     const location = useLocation();
     const navigate = useNavigate();
     const queryParams = getQueryParamsFromSearch(location.search)
     const status = queryParams[bountyClaimId] || BountyClaimStatus.FAILED;
-
-    useEffect(() => {
-        const encodeWord = async () => {
-            if(library) {
-                const encoded = await getHashFromWord(word)
-                setNonce(encoded)
-            }
-        }
-        encodeWord();
-    }, [library, word])
+    const encodedWord = getHashFromWord(word);
 
     useEffect(() => {
         const bountyOffer = async () => {
-            if(account && nonce && status === '0') {
+            if(account && status === BountyClaimStatus.INITIATED.toString()) {
                 try {
-                    const canClaim = await isOwner(library!, nonce);
+                    const canClaim = await isOwner(library!, encodedWord, account);
                     if(!canClaim) navigate(addQueryParamsToNavPath({ [bountyClaimId] : BountyClaimStatus.NOT_OWNER }, location.search));
-                    await attemptBountyClaim(library!, nonce)
+                    await attemptBountyClaim(library!, encodedWord)
                     navigate(addQueryParamsToNavPath({ [bountyClaimId] : BountyClaimStatus.SUCCESS }, location.search));
                 } catch (e: any) {
                     navigate(addQueryParamsToNavPath({ [bountyClaimId] : BountyClaimStatus.FAILED }, location.search));
@@ -81,11 +72,11 @@ export const BountyClaim = ({ word, bountyClaimId }: BounterOfferProps) => {
             }
         }
         bountyOffer();
-    }, [account, nonce, library, status, bountyClaimId, location, navigate])
+    }, [account, library, status, bountyClaimId, location, navigate, encodedWord])
 
   return (
     <div>
-      Claiming bounty for mword {word}{nonce && ` -- ${nonce}`}...
+      Claiming bounty for mword {word}{encodedWord && ` -- ${encodedWord._hex}`}...
       {status === BountyClaimStatus.NOT_OWNER.toString() && <div>Need to own the mword to claim bounty. Do you have the right account connected?</div>}
       {status === BountyClaimStatus.SUCCESS.toString() && <div>Successfully claimed bounty.</div>}
       {status === BountyClaimStatus.FAILED.toString() && <div>Denied transaction or otherwise encountered error.</div>}

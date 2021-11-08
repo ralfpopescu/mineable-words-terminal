@@ -36,6 +36,10 @@ export const encodeMWord = async ({ library, word }: EncodeMWordInput): Promise<
 
 export const getAllMWords = async ({ library }: LibraryInput) => {
     const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, library);
+    
+    const test = await contract.decodeMword(ethers.BigNumber.from('0x442b8c4c125d6854e31a69'))
+    console.log({ test })
+
     const totalSupply = await contract.totalSupply();
     console.log({ totalSupply })
     const mwords = [];

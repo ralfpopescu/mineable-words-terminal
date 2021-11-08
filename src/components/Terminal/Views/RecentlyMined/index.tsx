@@ -9,11 +9,11 @@ const Container = styled.div`
 
 export const RecentlyMined = () => {
     const { library } = useWeb3React<Web3Provider>();
-    const [recentlyMined, setRecentlyMined] = useState<string[]>([]);
+    const [recentlyMined, setRecentlyMined] = useState<string[] | null>(null);
 
     useEffect(() => {
         const getMWords = async () => {
-            if(library && !recentlyMined.length) {
+            if(library && !recentlyMined) {
                 const mwords = await getAllDecodedMWords({ library })
                 setRecentlyMined(mwords)
             }
@@ -24,6 +24,6 @@ export const RecentlyMined = () => {
 
     return (
     <Container>
-    {recentlyMined.length ? recentlyMined.join(', ') : 'No mwords yet.'}
+    {recentlyMined && recentlyMined.length ? recentlyMined.join(', ') : 'No mwords yet.'}
     </Container>
 )}

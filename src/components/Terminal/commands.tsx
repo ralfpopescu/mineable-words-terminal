@@ -10,7 +10,9 @@ import {
     Links,
     Mine,
     Mint,
-    RecentlyMined, } from './Views'
+    RecentlyMined, 
+    Withdraw,
+} from './Views'
 import { BigNumber } from "@ethersproject/bignumber";
 import { randomBytes } from "@ethersproject/random";
 import { generateNonce } from '../../utils/word-util'
@@ -180,7 +182,7 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
 
         const options = splitOnSpaces(input);
 
-        if(options.length !== 2) return "Must enter an mword that has a bounty and that you own."
+        if(options.length !== 1) return "Must enter an mword that has a bounty and that you own."
 
         const word = options[0];
 
@@ -209,6 +211,15 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
         navigate(concat);
 
         return <BountyOffer word={word} offer={parsedOffer} bountyOfferId={bountyOfferId} />
+    },
+    withdraw: async () => {
+        if(!account) return <div>Need to connect account to withdraw funds.</div>
+
+        const withdrawId = `withdrawId-${generateNonce(12)}`;
+        const concat = concatQueryParams(location.search, `${withdrawId}=0`)
+        navigate(concat);
+
+        return <Withdraw withdrawId={withdrawId} />
     },
   });
 

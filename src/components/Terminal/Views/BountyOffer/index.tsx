@@ -18,11 +18,12 @@ export const attemptBountyOffer = async function (
       console.log({ nonce, offer })
     const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, lib);
     try {
+        const oneEther = ethers.BigNumber.from("1000000000000000000");
       const signer = lib.getSigner();
     //   const numMined = await contract.numMined();
         const numMined = 100;
-      const tx = await contract.connect(signer).mint(nonce.toHexString(), {
-        gasLimit: (numMined + 1) % 33 === 0 ? 1400000 : 700000, value: ethers.BigNumber.from(offer),
+      const tx = await contract.connect(signer).offerBounty(nonce.toHexString(), {
+        gasLimit: (numMined + 1) % 33 === 0 ? 1400000 : 700000, value: oneEther.mul(offer),
       });
       return tx.hash;
     } catch (e: any) {
