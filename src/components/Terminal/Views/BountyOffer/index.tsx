@@ -70,6 +70,7 @@ export const BountyOffer = ({ word, offer, bountyOfferId }: BounterOfferProps) =
   return (
     <div>
       Offering bounty of {offer} for mword {word}{nonce && ` -- ${nonce}`}...
+      <div>Caution: if you want to retrieve your bounty funds, there will be a 100 blocks delay where your bounty can still be claimed.</div>
       {status === TxStatus.SUCCESS.toString() && <div>Successfully offered bounty.</div>}
       {status === TxStatus.FAILED.toString() && <div>Denied transaction or otherwise encountered error.</div>}
     </div>

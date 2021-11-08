@@ -1,5 +1,7 @@
 export { BountyClaim } from './BountyClaim';
 export { BountyOffer } from './BountyOffer';
+export { BountyRemove } from './BountyRemove';
+export { BountyRemoveInitiate } from './BountyRemoveInitiate';
 export { Calculations } from './Calculations'
 export { Connect } from './Connect'
 export { FAQ } from './FAQ'

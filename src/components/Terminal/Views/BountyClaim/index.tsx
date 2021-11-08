@@ -1,5 +1,5 @@
 import * as ethers from "ethers";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import { MineableWords__factory } from '../../../../typechain'

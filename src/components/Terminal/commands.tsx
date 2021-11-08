@@ -1,6 +1,8 @@
 import { 
     BountyClaim,
     BountyOffer,
+    BountyRemove,
+    BountyRemoveInitiate,
     Calculations,
     Connect,
     FAQ,
@@ -211,6 +213,36 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
         navigate(concat);
 
         return <BountyOffer word={word} offer={parsedOffer} bountyOfferId={bountyOfferId} />
+    },
+    "bounty-remove-initiate": (input: string) => {
+        if(!account) return <div>Need to connect account to initiate bounty removal.</div>
+
+        const options = splitOnSpaces(input);
+
+        if(options.length !== 1) return "Must enter a word on which you have a bounty."
+
+        const word = options[0];
+
+        const bountyRemoveInitiateId = `bountyRemoveInitiateId-${generateNonce(12)}`;
+        const concat = concatQueryParams(location.search, `${bountyRemoveInitiateId}=0`)
+        navigate(concat);
+
+        return <BountyRemoveInitiate word={word} bountyRemoveInitiateId={bountyRemoveInitiateId} />
+    },
+    "bounty-remove-complete": (input: string) => {
+        if(!account) return <div>Need to connect account to complete bounty removal.</div>
+
+        const options = splitOnSpaces(input);
+
+        if(options.length !== 1) return "Must enter a word on which you initiated a bounty removal."
+
+        const word = options[0];
+
+        const bountyRemoveId = `bountyRemoveId-${generateNonce(12)}`;
+        const concat = concatQueryParams(location.search, `${bountyRemoveId}=0`)
+        navigate(concat);
+
+        return <BountyRemove word={word} bountyRemoveId={bountyRemoveId} />
     },
     withdraw: async () => {
         if(!account) return <div>Need to connect account to withdraw funds.</div>
