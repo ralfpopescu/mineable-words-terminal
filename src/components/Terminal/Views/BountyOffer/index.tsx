@@ -7,15 +7,13 @@ import { getHashFromWord } from '../../../../utils/word-util'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { getQueryParamsFromSearch, addQueryParamsToNavPath } from '../../../../utils'
 import { TxStatus } from "../../../../utils/statuses";
-
-const MINEABLEWORDS_ADDR = process.env.REACT_APP_MINEABLE_WORDS_ADDRESS || '0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e'
+import { MINEABLEWORDS_ADDR } from '../../../../web3-util/config'
 
 export const attemptBountyOffer = async function (
     lib: Web3Provider,
     nonce: ethers.BigNumber,
     offer: number,
   ): Promise<string> {
-      console.log({ nonce, offer })
     const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, lib);
     try {
         const oneEther = ethers.BigNumber.from("1000000000000000000");

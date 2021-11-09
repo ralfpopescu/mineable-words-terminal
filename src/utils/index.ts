@@ -4,7 +4,6 @@ export const getOptions = <T extends Obj>(input: string): T => {
     //yields: ["command ", "h 100 ", "l 8"]
     //remove first index because it's the command
     const splitOnHyphen = input.split('-').slice(1);
-    console.log({ splitOnHyphen })
     if(!splitOnHyphen.length) return {} as T;
     const values = splitOnHyphen.map(v => {
         //yields ["h", "100"]
@@ -57,7 +56,6 @@ export const addQueryParamsToNavPath = (params: { [key: string] : string | numbe
 }
 
 export const concatQueryParams = (search: string, newParam: string) => {
-    console.log({ search, newParam })
     if(search.length) {
         return `${search}&${newParam}`
     }

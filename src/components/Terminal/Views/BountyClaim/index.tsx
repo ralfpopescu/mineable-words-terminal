@@ -7,10 +7,7 @@ import { getHashFromWord } from '../../../../utils/word-util'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { getQueryParamsFromSearch, addQueryParamsToNavPath } from '../../../../utils'
 import { BountyClaimStatus } from "../../../../utils/statuses";
-
-const MINEABLEWORDS_ADDR = process.env.REACT_APP_MINEABLE_WORDS_ADDRESS || '0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e'
-
-console.log({ MINEABLEWORDS_ADDR, env: process.env })
+import { MINEABLEWORDS_ADDR } from '../../../../web3-util/config'
 
 export const isOwner = async function (
     lib: Web3Provider,
@@ -20,7 +17,6 @@ export const isOwner = async function (
     const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, lib);
     try {
       const owner = await contract.ownerOf(encodedWord);
-      console.log({ owner, account })
       return owner === account;
     } catch (e: any) {
       const message: string = e.message;

@@ -1,22 +1,19 @@
 import { InjectedConnector } from "@web3-react/injected-connector";
 import { NetworkConnector } from "@web3-react/network-connector";
+import { chainIds, chainUrls } from "./config";
 
-const LOCAL_DEV_CHAIN_ID = 1340;
 export const injectedConnector = new InjectedConnector({
   supportedChainIds: [
-    1, // Mainnet
-    LOCAL_DEV_CHAIN_ID, // Hardhat
+    chainIds.MAINNET,
+    chainIds.ROPSTEN,
+    chainIds.LOCAL,
   ],
 });
 
-let mainnetUrl = process.env.REACT_APP_MAINNET_URL;
-if (!mainnetUrl) {
-  mainnetUrl = "https://cloudflare-eth.com";
-}
-
 export const networkConnector = new NetworkConnector({
   urls: {
-    1: mainnetUrl!,
+    1: chainUrls.MAINNET,
+    3: chainUrls.ROPSTEN,
   },
   defaultChainId: 1,
 });

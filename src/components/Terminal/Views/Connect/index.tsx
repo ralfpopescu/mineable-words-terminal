@@ -10,7 +10,6 @@ export const Connect = () => {
 
 
   useEffect(() => {
-      console.log({ account, status })
     if(!account || !status) activate(injectedConnector);
   }, [account, status, activate])
 

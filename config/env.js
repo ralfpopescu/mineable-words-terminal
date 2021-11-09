@@ -90,7 +90,13 @@ function getClientEnvironment(publicUrl) {
         // which is why it's disabled by default.
         // It is defined here so it is available in the webpackHotDevClient.
         FAST_REFRESH: process.env.FAST_REFRESH !== 'false',
-        REACT_APP_MINEABLE_WORDS_ADDRESS: process.env.REACT_APP_MINEABLE_WORDS_ADDRESS || "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0"
+        REACT_APP_NETWORK: "ropsten", // local | ropsten | mainnet
+        REACT_APP_MINEABLE_WORDS_ADDRESS_LOCAL: process.env.REACT_APP_MINEABLE_WORDS_ADDRESS || "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0",
+        REACT_APP_MINEABLE_WORDS_ADDRESS_ROPSTEN: process.env.REACT_APP_MINEABLE_WORDS_ADDRESS_ROPSTEN || "0xf64068b596EbD1E012F43916c2c34cD208338e12",
+        REACT_APP_MINEABLE_WORDS_ADDRESS_MAINNET: process.env.REACT_APP_MINEABLE_WORDS_ADDRESS || "0x123",
+        REACT_APP_LOCAL_URL: "http://localhost:8545",
+        REACT_APP_ROPSTEN_URL: "https://ropsten.infura.io/v3/d37e4dbaecf44046817af6c860a500bf",
+        REACT_APP_MAINNET_URL: "https://mainnet.infura.io/v3/d37e4dbaecf44046817af6c860a500bf",
       }
     );
   // Stringify all values so we can feed into webpack DefinePlugin

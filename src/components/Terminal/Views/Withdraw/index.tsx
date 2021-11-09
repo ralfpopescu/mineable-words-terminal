@@ -5,8 +5,7 @@ import { MineableWords__factory } from '../../../../typechain'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { getQueryParamsFromSearch, addQueryParamsToNavPath } from '../../../../utils'
 import { TxStatus } from "../../../../utils/statuses";
-
-const MINEABLEWORDS_ADDR = process.env.REACT_APP_MINEABLE_WORDS_ADDRESS || '0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e'
+import { MINEABLEWORDS_ADDR } from '../../../../web3-util/config'
 
 export const attemptWithdraw = async function (
     lib: Web3Provider,

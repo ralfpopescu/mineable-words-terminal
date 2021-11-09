@@ -32,7 +32,6 @@ export async function mine(
     const rangeEnd = BigNumber.from(_rangeEnd._hex);
     const address = BigNumber.from(_address._hex);
     const existingWords = lookingFor ? lookingFor : await getExistingWords();
-    console.log('how')
   
     for (let nonce = rangeStart; nonce.lt(rangeEnd); nonce = nonce.add(1)) {
       const word = getWordFromNonceAndAddress({ nonce, address})

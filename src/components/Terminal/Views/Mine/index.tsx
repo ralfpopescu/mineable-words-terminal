@@ -51,7 +51,6 @@ export const Mine = ({ initialOffset, lookingFor, workerCount, minerId} : MinePr
     const [ellipses, setEllipses] = useState(1);
     const location = useLocation();
     const queryParams = getQueryParamsFromSearch(location.search)
-    console.log({ queryParams, minerId })
 
     //@ts-ignore
     const miningStatus: any = queryParams[minerId] ? parseInt(queryParams[minerId]) : MiningStatus.STOPPED;
@@ -101,7 +100,6 @@ export const Mine = ({ initialOffset, lookingFor, workerCount, minerId} : MinePr
         startingNonce: initialOffset,
       });
 
-      console.log('the heck', MiningStatus)
       setMiningController(controller);
       controller.start().catch((e: any) => {
         console.log("Error mining: " + e);

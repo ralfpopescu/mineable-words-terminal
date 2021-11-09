@@ -85,9 +85,6 @@ export default class MiningController {
         this.args.updateHashRate(this.getHashRate());
       }
 
-      console.log({ results })
-
-
       const validResults = results.reduce((acc, curr) => [...acc, ...curr])
 
       if (validResults.length > 0) {

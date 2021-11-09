@@ -32,7 +32,6 @@ type CommandsInput = {
 
 const calculateTimeInHours = (hashRate: number, lengthOfWord: number) =>  {
     const result = ((27 ** lengthOfWord) / (hashRate * 1000000)) / 60 / 60;
-    console.log({ result, hashRate, lengthOfWord })
     return result;
 }
 
@@ -106,7 +105,6 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
             return { [key]: params[key] }
         }).reduce((acc, curr) => ({ ...acc, ...curr }))
         const navPath = getNavigationPathFromParams(newParams);
-        console.log('stopping!!')
         navigate(navPath)
         return "Stopping mining."
     },
@@ -133,7 +131,6 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
 
         if(randomNonce && specifiedNonce) return "Cannot both specify a specific starting nonce and randomize nonce."
 
-        console.log({ randomNonce, specifiedNonce })
         const startingNonce = randomNonce || specifiedNonce;
 
         const minerId = `miner-${generateNonce(12)}`;
@@ -209,7 +206,6 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
 
         const bountyOfferId = `bountyOfferId-${generateNonce(12)}`;
         const concat = concatQueryParams(location.search, `${bountyOfferId}=0`)
-        console.log('bountyofferconat', concat)
         navigate(concat);
 
         return <BountyOffer word={word} offer={parsedOffer} bountyOfferId={bountyOfferId} />
@@ -257,6 +253,5 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
 
 
   export const getCommands = ({ account, location, navigate }: CommandsInput) => {
-    //   console.log('getting commands', getMiningStatus, getMiningStatus())
     return commands({ account, location, navigate })
   }

@@ -7,8 +7,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { getQueryParamsFromSearch, addQueryParamsToNavPath } from '../../../../utils'
 import { TxStatus } from "../../../../utils/statuses";
 import { getHashFromWord } from '../../../../utils/word-util'
-
-const MINEABLEWORDS_ADDR = process.env.REACT_APP_MINEABLE_WORDS_ADDRESS || '0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e'
+import { MINEABLEWORDS_ADDR } from '../../../../web3-util/config'
 
 export const attemptBountyRemoveInitiate = async function (
     lib: Web3Provider,

@@ -7,16 +7,12 @@ import { getWordFromNonceAndAddress } from '../../../../utils/word-util'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { getQueryParamsFromSearch, addQueryParamsToNavPath } from '../../../../utils'
 import { TxStatus } from "../../../../utils/statuses";
-
-const MINEABLEWORDS_ADDR = process.env.REACT_APP_MINEABLE_WORDS_ADDRESS || '0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e'
-
-console.log('mint', { MINEABLEWORDS_ADDR })
+import { MINEABLEWORDS_ADDR } from '../../../../web3-util/config'
 
 export const attemptMint = async function (
     lib: Web3Provider,
     nonce: ethers.BigNumber,
   ): Promise<string> {
-      console.log('attempting mint', nonce)
     const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, lib);
     try {
       const signer = lib.getSigner();
@@ -60,7 +56,6 @@ export const Mint = ({ nonce, mintId }: MintProps) => {
 
   return (
     <div>
-        {console.log({ account })}
       Minting mword {getWordFromNonceAndAddress({ nonce, address: ethers.BigNumber.from(account)})} -- {nonce._hex} 
       {status === TxStatus.SUCCESS.toString() && <div>Successfully minted.</div>}
       {status === TxStatus.FAILED.toString() && <div>Denied transaction or otherwise encountered error.</div>}
