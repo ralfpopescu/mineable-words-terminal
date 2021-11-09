@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "mwords",
+  "name": "mineable_words",
   "icons": [
     {
       "src": "favicon.ico",
