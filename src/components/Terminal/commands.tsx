@@ -18,11 +18,9 @@ import {
 import { BigNumber } from "@ethersproject/bignumber";
 import { randomBytes } from "@ethersproject/random";
 import { generateNonce } from '../../utils/word-util'
-import { assertValidOptions, getOptions, getQueryParamsFromSearch, getNavigationPathFromParams, concatQueryParams } from '../../utils'
+import { assertValidOptions, getOptions, getQueryParamsFromSearch, getNavigationPathFromParams, concatQueryParams, splitOnSpaces, getWordsFromOptions } from '../../utils'
 import { Location, NavigateFunction } from 'react-router-dom';
 import { wrapInErrorWrapper } from './command-wrapper';
-
-const splitOnSpaces = (input: string) => input.split(/\s+/);
 
 type CommandsInput = {
     account: string | null | undefined;
@@ -30,26 +28,13 @@ type CommandsInput = {
     navigate: NavigateFunction;
 }
 
-const calculateTimeInHours = (hashRate: number, lengthOfWord: number) =>  {
-    const result = ((32 ** lengthOfWord) / (hashRate * 1000000)) / 60 / 60;
-    return result;
-}
-
-const getWordsFromOptions = (input: string): string[] | null => {
-    try {
-        //enter [hello,goodbye, hi]
-        const splitOnBrackets= input.split('[')[1].split(']')[0];
-        const splitOnCommas = splitOnBrackets.split(',');
-        return splitOnCommas.map(w => w.replace(/\s/g,''))
-    } catch (e) {
-        return null
-    }
-}
-
 export const commands = ({ account, location, navigate }: CommandsInput) => wrapInErrorWrapper({
     help: () => <Help />,
     faq: () => <FAQ />,
-    recent: () => <RecentlyMined />,
+    recent: () => {
+        if(!account) return <div>Need to connect account to see recently mined mwords. Use command "connect".</div>
+        return <RecentlyMined />
+    },
     links: () => <Links />,
     info: () => <Info />,
     calc: (input: string) => {
@@ -62,34 +47,7 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
 
         if((options.h && !hashRate) || (options.l && !lengthOfWord)) return `Must enter valid, positive, non-zero integers.`
 
-        if(hashRate) {
-            if(lengthOfWord) {
-                return `It would take you ${calculateTimeInHours(hashRate, lengthOfWord)} hours to mine a word of length ${lengthOfWord} at a hash rate of ${hashRate} MH/s.`
-            }
-            const wordLengths = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-            const times = wordLengths.map(l => ({ wordLength: l, time: calculateTimeInHours(hashRate, l) }))
-            const calculations = [{ hashRate, times }]
-            return <Calculations calculations={calculations} />
-        } else {
-            if(lengthOfWord) {
-                const hashRates = [1, 10, 100, 500, 10000] 
-                const calculations = hashRates
-                .map(hr => 
-                    ({ hashRate: hr, times: [
-                        { wordLength: lengthOfWord, time: calculateTimeInHours(hr, lengthOfWord) }
-                    ]}))
-                return <Calculations calculations={calculations} />
-            }
-            const wordLengths = [4, 6, 8, 10, 12, 13, 14, 15];
-            const hashRates = [10, 100, 500, 10000] 
-            const calculations = hashRates.map(hr => {
-                return {
-                    hashRate: hr,
-                    times: wordLengths.map(wordLength => ({ wordLength, time: calculateTimeInHours(hr, wordLength) }))
-                }
-            })
-            return <Calculations calculations={calculations} />
-        }
+        return <Calculations hashRate={hashRate} lengthOfWord={lengthOfWord} />
     },
     connect: async () => <Connect />,
     stop: () => {
@@ -109,7 +67,7 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
         return "Stopping mining."
     },
     mine: (input: string) => {
-        if(!account) return <div>Need to connect account to mine.</div>
+        if(!account) return <div>Need to connect account to mine mwords. Use command "connect".</div>
 
         const options = getOptions<{ r?: string, n?: string, w?: string }>(input);
         const invalidOptions = assertValidOptions(options, ["r", "n", "w"]);
@@ -144,7 +102,7 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
         />
     },
     mint: (input: string) => {
-        if(!account) return <div>Need to connect account to mint.</div>
+        if(!account) return <div>Need to connect account to mint. Use command "connect".</div>
 
         const options = splitOnSpaces(input);
 
@@ -177,7 +135,7 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
     },
     found: () => <FoundWords />,
     "bounty-claim": (input: string) => {
-        if(!account) return <div>Need to connect account to mint.</div>
+        if(!account) return <div>Need to connect account to claim a bounty. Use command "connect".</div>
 
         const options = splitOnSpaces(input);
 
@@ -192,7 +150,7 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
         return <BountyClaim word={word} bountyClaimId={bountyClaimId} />
     },
     "bounty-offer": (input: string) => {
-        if(!account) return <div>Need to connect account to offer a bounty.</div>
+        if(!account) return <div>Need to connect account to offer a bounty. Use command "connect".</div>
 
         const options = splitOnSpaces(input);
 
@@ -211,7 +169,7 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
         return <BountyOffer word={word} offer={parsedOffer} bountyOfferId={bountyOfferId} />
     },
     "bounty-remove-initiate": (input: string) => {
-        if(!account) return <div>Need to connect account to initiate bounty removal.</div>
+        if(!account) return <div>Need to connect account to initiate bounty removal. Use command "connect".</div>
 
         const options = splitOnSpaces(input);
 
@@ -226,7 +184,7 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
         return <BountyRemoveInitiate word={word} bountyRemoveInitiateId={bountyRemoveInitiateId} />
     },
     "bounty-remove-complete": (input: string) => {
-        if(!account) return <div>Need to connect account to complete bounty removal.</div>
+        if(!account) return <div>Need to connect account to complete bounty removal. Use command "connect".</div>
 
         const options = splitOnSpaces(input);
 
@@ -241,7 +199,7 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
         return <BountyRemove word={word} bountyRemoveId={bountyRemoveId} />
     },
     withdraw: async () => {
-        if(!account) return <div>Need to connect account to withdraw funds.</div>
+        if(!account) return <div>Need to connect account to withdraw funds. Use command "connect".</div>
 
         const withdrawId = `withdrawId-${generateNonce(12)}`;
         const concat = concatQueryParams(location.search, `${withdrawId}=0`)

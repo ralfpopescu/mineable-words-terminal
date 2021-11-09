@@ -14,6 +14,19 @@ export const getOptions = <T extends Obj>(input: string): T => {
     return values.reduce((acc, curr) => ({ ...acc, ...curr })) as T;
 }
 
+export const splitOnSpaces = (input: string) => input.split(/\s+/);
+
+export const getWordsFromOptions = (input: string): string[] | null => {
+    try {
+        //enter [hello,goodbye, hi]
+        const splitOnBrackets= input.split('[')[1].split(']')[0];
+        const splitOnCommas = splitOnBrackets.split(',');
+        return splitOnCommas.map(w => w.replace(/\s/g,''))
+    } catch (e) {
+        return null
+    }
+}
+
 export const assertValidOptions = (options: Obj, validOptions: string[]) => {
     const keys = Object.keys(options);
     const invalid: string[] = [];
