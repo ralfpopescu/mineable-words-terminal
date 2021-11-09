@@ -25,4 +25,4 @@ export const contractAddresses: Networks = {
 export const MINEABLEWORDS_ADDR = contractAddresses[process.env.REACT_APP_NETWORK as keyof Networks || 'LOCAL' as 'LOCAL'] 
     || "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0";
 
-console.log({ MINEABLEWORDS_ADDR })
+console.log({ MINEABLEWORDS_ADDR, contractAddresses, network: process.env.REACT_APP_NETWORK })

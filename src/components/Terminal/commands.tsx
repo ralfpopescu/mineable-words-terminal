@@ -31,7 +31,7 @@ type CommandsInput = {
 }
 
 const calculateTimeInHours = (hashRate: number, lengthOfWord: number) =>  {
-    const result = ((27 ** lengthOfWord) / (hashRate * 1000000)) / 60 / 60;
+    const result = ((32 ** lengthOfWord) / (hashRate * 1000000)) / 60 / 60;
     return result;
 }
 

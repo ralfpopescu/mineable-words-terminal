@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import { getAllDecodedMWords } from '../../../../web3-util/methods'
+import { Ellipsis } from '../../../Ellipsis'
 
 const Container = styled.div`
 `
@@ -14,6 +15,7 @@ export const RecentlyMined = () => {
     useEffect(() => {
         const getMWords = async () => {
             if(library && !recentlyMined) {
+                console.log('getting mewords')
                 const mwords = await getAllDecodedMWords({ library })
                 setRecentlyMined(mwords)
             }
@@ -24,6 +26,8 @@ export const RecentlyMined = () => {
 
     return (
     <Container>
-    {recentlyMined && recentlyMined.length ? recentlyMined.join(', ') : 'No mwords yet.'}
+    {!recentlyMined && <>Loading mwords<Ellipsis /></>}
+    {recentlyMined && !recentlyMined.length && 'No mwords yet.'}
+    {recentlyMined && recentlyMined.length && recentlyMined.join(', ')}
     </Container>
 )}
