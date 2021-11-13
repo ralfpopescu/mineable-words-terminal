@@ -65,6 +65,15 @@ export const getLetterFromNumber = (index: number) => {
     '?': BigNumber.from(31),
   }
 
+export const getInvalidCharactersFromWord = (word: string) => {
+  const invalidCharacters = []
+  for(let i = 0; i < word.length; i += 1) {
+    const character = word.charAt(i);
+    if(!letterToBigNumber[character]) invalidCharacters.push(character);
+  }
+  return invalidCharacters;
+}
+
 export const toUint88 = (num: BigNumber) => {
     const numberOfBits = 88;
     const mask = BigNumber.from(`0x${'f'.repeat(numberOfBits / 4)}`);

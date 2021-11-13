@@ -9,6 +9,10 @@ import { getQueryParamsFromSearch, addQueryParamsToNavPath } from '../../../../u
 import { TxStatus } from "../../../../utils/statuses";
 import { MINEABLEWORDS_ADDR } from '../../../../web3-util/config'
 
+const scaleOffer = (offer: number, decimalPlaces: number) => Math.floor(offer * (10 ** decimalPlaces))
+const scaleEth = (eth: ethers.BigNumber, decimalPlaces: number) => 
+  eth.div(ethers.BigNumber.from(10 ** decimalPlaces))
+
 export const attemptBountyOffer = async function (
     lib: Web3Provider,
     nonce: ethers.BigNumber,
@@ -16,12 +20,17 @@ export const attemptBountyOffer = async function (
   ): Promise<string> {
     const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, lib);
     try {
-        const oneEther = ethers.BigNumber.from("1000000000000000000");
+      const oneEther = ethers.BigNumber.from("1000000000000000000");
       const signer = lib.getSigner();
     //   const numMined = await contract.numMined();
         const numMined = 100;
+        //trims to 5 decimal places scales the values accordingly so we're not dealing with decimals 
+      const decimalPlaces = 5;
+      const scaledOffer = scaleOffer(offer, decimalPlaces)
+      const scaledEth = scaleEth(oneEther, decimalPlaces)
+
       const tx = await contract.connect(signer).offerBounty(nonce.toHexString(), {
-        gasLimit: (numMined + 1) % 33 === 0 ? 1400000 : 700000, value: oneEther.mul(offer),
+        gasLimit: (numMined + 1) % 33 === 0 ? 1400000 : 700000, value: scaledEth.mul(scaledOffer),
       });
       return tx.hash;
     } catch (e: any) {

@@ -1,4 +1,5 @@
 import { 
+    Bounties,
     BountyClaim,
     BountyOffer,
     BountyRemove,
@@ -17,7 +18,7 @@ import {
 } from './Views'
 import { BigNumber } from "@ethersproject/bignumber";
 import { randomBytes } from "@ethersproject/random";
-import { generateNonce } from '../../utils/word-util'
+import { generateNonce, getInvalidCharactersFromWord } from '../../utils/word-util'
 import { assertValidOptions, getOptions, getQueryParamsFromSearch, getNavigationPathFromParams, concatQueryParams, splitOnSpaces, getWordsFromOptions } from '../../utils'
 import { Location, NavigateFunction } from 'react-router-dom';
 import { wrapInErrorWrapper } from './command-wrapper';
@@ -67,16 +68,18 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
         return "Stopping mining."
     },
     mine: (input: string) => {
+        console.log({ input })
         if(!account) return <div>Need to connect account to mine mwords. Use command "connect".</div>
 
-        const options = getOptions<{ r?: string, n?: string, w?: string }>(input);
-        const invalidOptions = assertValidOptions(options, ["r", "n", "w"]);
+        const options = getOptions<{ s?: string, n?: string, w?: string }>(input);
+        const invalidOptions = assertValidOptions(options, ["s", "n", "w"]);
         if(invalidOptions) return invalidOptions;
 
-        const randomNonce = options.r ? BigNumber.from(randomBytes(32)) : undefined;
-        const specifiedNonce = options.n? BigNumber.from(options.n) : undefined;
+        const randomNonce = options.s === 'r' ? BigNumber.from(randomBytes(32)) : undefined;
+        const specifiedNonce = options.s ? BigNumber.from(options.s) : undefined;
+        let workerCount = options.n ? parseInt(options.n) : 4;
 
-        if(options.n && !specifiedNonce) return "Must specify a valid, positive number if passing a starting nonce."
+        if(options.s && !specifiedNonce && options.s !== 'r') return "Must specify a valid, positive number or 'r' (for random) if passing a starting nonce."
 
         const wordOptions = options.w;
         let words;
@@ -84,19 +87,23 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
         if(wordOptions) {
             const processedWordOptions = getWordsFromOptions(wordOptions);
             if(!processedWordOptions) return "Words must be passed in the following format: -w [hello,goodbye]"
+            const invalidCharacters = processedWordOptions.map(word => getInvalidCharactersFromWord(word)).flat();
+            console.log({ invalidCharacters })
+            if(invalidCharacters.length) return `Invalid characters: ${invalidCharacters.join(' ')}`
             words = processedWordOptions;
         }
 
-        if(randomNonce && specifiedNonce) return "Cannot both specify a specific starting nonce and randomize nonce."
-
-        const startingNonce = randomNonce || specifiedNonce;
+        const startingNonce = randomNonce || specifiedNonce ||  BigNumber.from(0);
 
         const minerId = `miner-${generateNonce(12)}`;
 
         navigate(concatQueryParams(location.search, `${minerId}=0`));
 
+        console.log({ lookingFor: words })
+
         return <Mine 
-        initialOffset={startingNonce || BigNumber.from(0)} 
+        workerCount={workerCount}
+        initialOffset={startingNonce} 
         lookingFor={words} 
         minerId={minerId}
         />
@@ -134,6 +141,10 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
         return <Mint nonce={nonce} mintId={mintId} />
     },
     found: () => <FoundWords />,
+    bounties: () => {
+        if(!account) return <div>Need to connect account to view bounties. Use command "connect".</div>
+        return <Bounties />
+    },
     "bounty-claim": (input: string) => {
         if(!account) return <div>Need to connect account to claim a bounty. Use command "connect".</div>
 

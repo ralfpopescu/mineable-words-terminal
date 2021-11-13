@@ -131,7 +131,9 @@ export const Mine = ({ initialOffset, lookingFor, workerCount, minerId} : MinePr
                 else setEllipses(e => e + 1);
             }} />
         {hashRate ? <div>Mining mwords{'.'.repeat(ellipses)}</div> : <div>Starting up the miner...</div>}
+        {<div>Number of workers: {workerCount || 4}</div>}
         {<div>Hash rate: ~{hashRate || '???'} h/s</div>}
+        {<div>Looking for words: {lookingFor?.join(', ')}</div>}
        {getFoundMessage(foundWords)}
         <Row><div style={{ marginRight: '8px' }}>Most recent word:</div>{foundWords.length ? 
             <WordAndNonce word={foundWords[foundWords.length - 1].word} nonce={foundWords[foundWords.length - 1].nonce} />: "-----"}

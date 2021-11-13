@@ -22,7 +22,9 @@ export const contractAddresses: Networks = {
     MAINNET: process.env.REACT_APP_MINEABLE_WORDS_ADDRESS_MAIN,
 }
 
-export const MINEABLEWORDS_ADDR = contractAddresses[process.env.REACT_APP_NETWORK as keyof Networks || 'LOCAL' as 'LOCAL'] 
+export const network = process.env.REACT_APP_NETWORK as keyof Networks || 'LOCAL' as 'LOCAL'
+
+export const MINEABLEWORDS_ADDR = contractAddresses[network] 
     || "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0";
 
 console.log({ MINEABLEWORDS_ADDR, contractAddresses, network: process.env.REACT_APP_NETWORK })

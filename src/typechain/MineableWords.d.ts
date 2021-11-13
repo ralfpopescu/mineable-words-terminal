@@ -32,6 +32,7 @@ interface MineableWordsInterface extends ethers.utils.Interface {
     "decodeMword(uint88)": FunctionFragment;
     "encodeMword(uint256)": FunctionFragment;
     "encodeNonce(address,uint96)": FunctionFragment;
+    "fees()": FunctionFragment;
     "getApproved(uint256)": FunctionFragment;
     "initiateBountyRemoval(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
@@ -95,6 +96,7 @@ interface MineableWordsInterface extends ethers.utils.Interface {
     functionFragment: "encodeNonce",
     values: [string, BigNumberish]
   ): string;
+  encodeFunctionData(functionFragment: "fees", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "getApproved",
     values: [BigNumberish]
@@ -205,6 +207,7 @@ interface MineableWordsInterface extends ethers.utils.Interface {
     functionFragment: "encodeNonce",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "fees", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getApproved",
     data: BytesLike
@@ -281,12 +284,16 @@ interface MineableWordsInterface extends ethers.utils.Interface {
   events: {
     "Approval(address,address,uint256)": EventFragment;
     "ApprovalForAll(address,address,bool)": EventFragment;
+    "BountyOffered(uint256)": EventFragment;
+    "BountyRemoval(uint256)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "Transfer(address,address,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "Approval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BountyOffered"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "BountyRemoval"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Transfer"): EventFragment;
 }
@@ -306,6 +313,10 @@ export type ApprovalForAllEvent = TypedEvent<
     approved: boolean;
   }
 >;
+
+export type BountyOfferedEvent = TypedEvent<[BigNumber] & { mword: BigNumber }>;
+
+export type BountyRemovalEvent = TypedEvent<[BigNumber] & { mword: BigNumber }>;
 
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string] & { previousOwner: string; newOwner: string }
@@ -408,6 +419,8 @@ export class MineableWords extends BaseContract {
       nonce: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
+
+    fees(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getApproved(
       tokenId: BigNumberish,
@@ -580,6 +593,8 @@ export class MineableWords extends BaseContract {
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
+  fees(overrides?: CallOverrides): Promise<BigNumber>;
+
   getApproved(
     tokenId: BigNumberish,
     overrides?: CallOverrides
@@ -739,6 +754,8 @@ export class MineableWords extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    fees(overrides?: CallOverrides): Promise<BigNumber>;
+
     getApproved(
       tokenId: BigNumberish,
       overrides?: CallOverrides
@@ -873,6 +890,22 @@ export class MineableWords extends BaseContract {
       { owner: string; operator: string; approved: boolean }
     >;
 
+    "BountyOffered(uint256)"(
+      mword?: BigNumberish | null
+    ): TypedEventFilter<[BigNumber], { mword: BigNumber }>;
+
+    BountyOffered(
+      mword?: BigNumberish | null
+    ): TypedEventFilter<[BigNumber], { mword: BigNumber }>;
+
+    "BountyRemoval(uint256)"(
+      mword?: BigNumberish | null
+    ): TypedEventFilter<[BigNumber], { mword: BigNumber }>;
+
+    BountyRemoval(
+      mword?: BigNumberish | null
+    ): TypedEventFilter<[BigNumber], { mword: BigNumber }>;
+
     "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,
       newOwner?: string | null
@@ -948,6 +981,8 @@ export class MineableWords extends BaseContract {
       nonce: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
+
+    fees(overrides?: CallOverrides): Promise<BigNumber>;
 
     getApproved(
       tokenId: BigNumberish,
@@ -1118,6 +1153,8 @@ export class MineableWords extends BaseContract {
       nonce: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    fees(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getApproved(
       tokenId: BigNumberish,

@@ -7,6 +7,8 @@ import { getCommands } from './commands'
 
 const welcomeMessage = `Welcome to mineable_words (mwords). Enter "help" to get started.
 `
+
+const errorMessage = `Command not recognized.`
 export const Terminal = () => {
     const provider = useWeb3React<Web3Provider>();
     const { account } = provider;
@@ -20,6 +22,8 @@ export const Terminal = () => {
     <ReactTerminal
       commands={commands}
       welcomeMessage={welcomeMessage}
+      errorMessage={errorMessage}
+      prompt={"->"}
       themes={{
         theme: {
           themeBGColor: "#0f0f0f",

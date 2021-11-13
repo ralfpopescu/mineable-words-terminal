@@ -7,8 +7,9 @@ export const getOptions = <T extends Obj>(input: string): T => {
     if(!splitOnHyphen.length) return {} as T;
     const values = splitOnHyphen.map(v => {
         //yields ["h", "100"]
-        const splitOnSpaces = v.split(" ");
-        return { [splitOnSpaces[0]] : splitOnSpaces[1] }
+        const [key, ...value] = v.split(" ");
+        console.log({ key, value })
+        return { [key] : value.join('') }
     })
 
     return values.reduce((acc, curr) => ({ ...acc, ...curr })) as T;
@@ -21,7 +22,8 @@ export const getWordsFromOptions = (input: string): string[] | null => {
         //enter [hello,goodbye, hi]
         const splitOnBrackets= input.split('[')[1].split(']')[0];
         const splitOnCommas = splitOnBrackets.split(',');
-        return splitOnCommas.map(w => w.replace(/\s/g,''))
+        console.log({ input, splitOnBrackets, splitOnCommas, hi: splitOnCommas.map(w => w.replace(/\s+/g, '')) })
+        return splitOnCommas.map(w => w.replace(/\s+/g, ''))
     } catch (e) {
         return null
     }

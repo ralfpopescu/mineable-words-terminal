@@ -14,6 +14,12 @@ export const attemptMint = async function (
     nonce: ethers.BigNumber,
   ): Promise<string> {
     const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, lib);
+    console.log(contract)
+    console.log(contract.filters)
+    const filters = await contract.queryFilter(
+      contract.filters.Transfer("0x0000000000000000000000000000000000000000"),
+    );
+    console.log({ filters })
     try {
       const signer = lib.getSigner();
     //   const numMined = await contract.numMined();
