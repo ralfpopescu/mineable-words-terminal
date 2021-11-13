@@ -29,6 +29,8 @@ type CommandsInput = {
     navigate: NavigateFunction;
 }
 
+const getInvalidCharactersMessage = (invalidCharacters: string[]) => `Invalid characters in mword: ${invalidCharacters.join(' ')}`
+
 export const commands = ({ account, location, navigate }: CommandsInput) => wrapInErrorWrapper({
     help: () => <Help />,
     faq: () => <FAQ />,
@@ -88,8 +90,7 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
             const processedWordOptions = getWordsFromOptions(wordOptions);
             if(!processedWordOptions) return "Words must be passed in the following format: -w [hello,goodbye]"
             const invalidCharacters = processedWordOptions.map(word => getInvalidCharactersFromWord(word)).flat();
-            console.log({ invalidCharacters })
-            if(invalidCharacters.length) return `Invalid characters: ${invalidCharacters.join(' ')}`
+            if(invalidCharacters.length) return getInvalidCharactersMessage(invalidCharacters);
             words = processedWordOptions;
         }
 
@@ -169,6 +170,10 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
 
         const word = options[0];
         const offer = options[1];
+
+        console.log({ word, length: word.length })
+
+        if(getInvalidCharactersFromWord(word).length) return getInvalidCharactersMessage(getInvalidCharactersFromWord(word))
 
         const parsedOffer = parseFloat(offer);
         if(!parsedOffer) return "Must offer a valid, positive amount of eth."

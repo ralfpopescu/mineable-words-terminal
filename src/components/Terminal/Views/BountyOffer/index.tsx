@@ -49,6 +49,7 @@ export const BountyOffer = ({ word, offer, bountyOfferId }: BounterOfferProps) =
     const navigate = useNavigate();
     const queryParams = getQueryParamsFromSearch(location.search)
     const status = queryParams[bountyOfferId] || TxStatus.FAILED;
+    console.log({ word, length: word.length })
 
     useEffect(() => {
         const encodeWord = async () => {
