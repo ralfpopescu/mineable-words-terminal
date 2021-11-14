@@ -1,5 +1,6 @@
 export { Bounties } from './Bounties';
 export { BountyClaim } from './BountyClaim';
+export { BountyHelp } from './BountyHelp';
 export { BountyOffer } from './BountyOffer';
 export { BountyRemove } from './BountyRemove';
 export { BountyRemoveInitiate } from './BountyRemoveInitiate';

@@ -1,6 +1,7 @@
 import { 
     Bounties,
     BountyClaim,
+    BountyHelp,
     BountyOffer,
     BountyRemove,
     BountyRemoveInitiate,
@@ -34,6 +35,7 @@ const getInvalidCharactersMessage = (invalidCharacters: string[]) => `Invalid ch
 export const commands = ({ account, location, navigate }: CommandsInput) => wrapInErrorWrapper({
     help: () => <Help />,
     faq: () => <FAQ />,
+    'bounty-help': () => <BountyHelp />,
     recent: () => {
         if(!account) return <div>Need to connect account to see recently mined mwords. Use command "connect".</div>
         return <RecentlyMined />

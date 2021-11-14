@@ -1,6 +1,7 @@
 import { MineableWords__factory } from '../typechain'
 import * as ethers from "ethers";
 import { MINEABLEWORDS_ADDR } from '../web3-util/config'
+import { getWordFromHash } from '../utils/word-util';
 
 export const generateNonce = (length: number) => {
     const result = [];
@@ -67,13 +68,32 @@ export const getAllBountiesRemoved = async ({ library }: LibraryInput): Promise<
     return bountiesRemoved.map(b => b.args.mword);
 } 
 
-export const getCurrentBounties = async ({ library }: LibraryInput): Promise<ethers.BigNumber[]> => {
+export type BountyType = {
+    buyer: string;
+    value: ethers.BigNumber;
+    isClaimed: boolean;
+    safeRemoveAfterBlockNumber: ethers.BigNumber;
+    mword: ethers.BigNumber;
+    decoded: string;
+  }
+
+type getBountyFromMwordInput = LibraryInput & { mword: ethers.BigNumber }
+
+export const getBountyFromMword = async ({ library, mword }: getBountyFromMwordInput): Promise<BountyType> => {
+    const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, library);
+    const bounty = await contract.bounties(mword);
+    return { ...bounty, mword, decoded: getWordFromHash(mword) };
+}
+
+export const getCurrentBounties = async ({ library }: LibraryInput): Promise<BountyType[]> => {
     const offered = await getAllBountiesOffered({ library });
     const removed = await getAllBountiesRemoved({ library });
 
     console.log({ offered, removed })
 
-    return offered.filter(o => !removed.some(r => r._hex === o._hex))
+   return Promise.all(offered
+    .filter(o => !removed.some(r => r._hex === o._hex))
+    .map(mword => getBountyFromMword({ library, mword })));
 }  
 
 
