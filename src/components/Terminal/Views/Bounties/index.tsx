@@ -28,7 +28,7 @@ export const Bounties = () => {
     return (
     <Container>
     {!bounties && <>Loading current bounties...<Ellipsis /></>}
-    {bounties && !bounties.length && 'No bounties yet.'}
-    {bounties && bounties.length && bounties.join(', ')}
+    {(bounties && bounties.length === 0) ? 'No bounties yet.' : ''}
+    {bounties?.length ? bounties.join(', ') : ''}
     </Container>
 )}

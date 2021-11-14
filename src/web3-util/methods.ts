@@ -52,8 +52,9 @@ export const getAllDecodedMWords = async ({ library }: LibraryInput): Promise<st
 
 export const getAllBountiesOffered = async ({ library }: LibraryInput): Promise<ethers.BigNumber[]> => {
     const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, library);
+    console.log(contract.filters)
     const bountiesOffered = await contract.queryFilter(
-      contract.filters.BountyOffered("0x0000000000000000000000000000000000000000"),
+      contract.filters.BountyOffered(null),
     );
     return bountiesOffered.map(b => b.args.mword);
 } 
@@ -61,7 +62,7 @@ export const getAllBountiesOffered = async ({ library }: LibraryInput): Promise<
 export const getAllBountiesRemoved = async ({ library }: LibraryInput): Promise<ethers.BigNumber[]> => {
     const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, library);
     const bountiesRemoved = await contract.queryFilter(
-      contract.filters.BountyRemoval("0x0000000000000000000000000000000000000000"),
+      contract.filters.BountyRemoval(null),
     );
     return bountiesRemoved.map(b => b.args.mword);
 } 
