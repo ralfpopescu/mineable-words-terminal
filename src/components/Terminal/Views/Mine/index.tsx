@@ -27,6 +27,10 @@ export type MineProps = {
     bountyHunt: boolean;
 }
 
+const Yellow = styled.span`
+color: yellow;
+`
+
 const Column = styled.div`
 display: flex;
 flex-direction: column;
@@ -35,6 +39,12 @@ flex-direction: column;
 const Row = styled.div`
 display: flex;
 flex-direction: row;
+`
+
+const GridContainer = styled.div`
+display: grid;
+grid-template-columns: 1fr 3fr;
+grid-template-rows: repeat(auto-fit);
 `
 
 const getFoundMessage = (foundWords: any[]) => {
@@ -144,7 +154,8 @@ export const Mine = ({ initialOffset, lookingFor, workerCount, minerId, bountyHu
   if(miningStatus === MiningStatus.STOPPED) return (
     <Column>
         <div>{foundWords.map(fw => <WordAndNonce word={fw.word} nonce={fw.nonce} />)}</div>
-        <div>Miner stopped. Type "found" to see words you have found.</div>
+        <div>Miner stopped.</div>
+        <div>Type "found" to see words you have found.</div>
     </Column>
   )
 
@@ -156,14 +167,16 @@ export const Mine = ({ initialOffset, lookingFor, workerCount, minerId, bountyHu
                 else setEllipses(e => e + 1);
             }} />
         {hashRate ? <div>Mining mwords{'.'.repeat(ellipses)}</div> : <div>Starting up the miner{'.'.repeat(ellipses)}</div>}
-        {<div>Number of workers: {workerCount || 4}</div>}
-        {hashRate && <div>Hash rate: ~{hashRate} h/s</div>}
+        <GridContainer>
+        {<div><Yellow>Number of workers: </Yellow>{workerCount || 4}</div>}
+        {<div><Yellow>Hash rate: </Yellow>{hashRate ? `~${hashRate} h/s` : `Calculating${'.'.repeat(ellipses)}`}</div>}
+        {<div><Yellow>Bounty hunt mode: </Yellow>{bountyHunt ? 'enabled' : 'disabled'}</div>}
+        {<div>{allLookingFor ? <><Yellow>Looking for words:</Yellow>{allLookingFor?.join(', ')}`</> : <Yellow>Finding all words</Yellow>}</div>}
+        {<div><Yellow>Found this session: </Yellow>{foundWords.length}</div>}
+        {<Row><Yellow style={{ marginRight: '8px'}}>Last word found: </Yellow>{foundWords.length ? 
+            <WordAndNonce word={foundWords[foundWords.length - 1].word} nonce={foundWords[foundWords.length - 1].nonce} />: "-----"}</Row>}
+        </GridContainer>
         {bountyHunt && <div>Bounty hunt mode on</div>}
-        {allLookingFor && <div>Looking for words: {allLookingFor?.join(', ')}</div>}
-       {getFoundMessage(foundWords)}
-        <Row><div style={{ marginRight: '8px' }}>Most recent word:</div>{foundWords.length ? 
-            <WordAndNonce word={foundWords[foundWords.length - 1].word} nonce={foundWords[foundWords.length - 1].nonce} />: "-----"}
-        </Row>
     </Column>
     )
 }
