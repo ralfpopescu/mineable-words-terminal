@@ -32,6 +32,24 @@ type CommandsInput = {
 
 const getInvalidCharactersMessage = (invalidCharacters: string[]) => `Invalid characters in mword: ${invalidCharacters.join(' ')}`
 
+const getStop = (location: Location, navigate: NavigateFunction) => () => {
+    const params = getQueryParamsFromSearch(location.search);
+    if(!params || !Object.keys(params).length) return;
+        const keys = Object.keys(params);
+        const newParams = keys.map((key: string) => {
+            const split = key.split('-');
+            const paramType = split[0];
+            const paramId = split[1];
+            if(paramType === 'miner') {
+                return { [`miner-${paramId}`]: '3'}
+            }
+            return { [key]: params[key] }
+        }).reduce((acc, curr) => ({ ...acc, ...curr }))
+        const navPath = getNavigationPathFromParams(newParams);
+        navigate(navPath)
+        return "Stopping mining."
+}
+
 export const commands = ({ account, location, navigate }: CommandsInput) => wrapInErrorWrapper({
     help: () => <Help />,
     faq: () => <FAQ />,
@@ -55,28 +73,13 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
         return <Calculations hashRate={hashRate} lengthOfWord={lengthOfWord} />
     },
     connect: async () => <Connect />,
-    stop: () => {
-        const params = getQueryParamsFromSearch(location.search);
-        const keys = Object.keys(params);
-        const newParams = keys.map((key: string) => {
-            const split = key.split('-');
-            const paramType = split[0];
-            const paramId = split[1];
-            if(paramType === 'miner') {
-                return { [`miner-${paramId}`]: '3'}
-            }
-            return { [key]: params[key] }
-        }).reduce((acc, curr) => ({ ...acc, ...curr }))
-        const navPath = getNavigationPathFromParams(newParams);
-        navigate(navPath)
-        return "Stopping mining."
-    },
-    mine: (input: string) => {
+    stop: getStop(location, navigate),
+    mine: async (input: string) => {
         console.log({ input })
         if(!account) return <div>Need to connect account to mine mwords. Use command "connect".</div>
 
-        const options = getOptions<{ s?: string, n?: string, w?: string }>(input);
-        const invalidOptions = assertValidOptions(options, ["s", "n", "w"]);
+        const options = getOptions<{ s?: string, n?: string, w?: string, bh?: string }>(input);
+        const invalidOptions = assertValidOptions(options, ["s", "n", "w", "bh"]);
         if(invalidOptions) return invalidOptions;
 
         const randomNonce = options.s === 'r' ? BigNumber.from(randomBytes(32)) : undefined;
@@ -102,13 +105,12 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
 
         navigate(concatQueryParams(location.search, `${minerId}=0`));
 
-        console.log({ lookingFor: words })
-
         return <Mine 
         workerCount={workerCount}
         initialOffset={startingNonce} 
         lookingFor={words} 
         minerId={minerId}
+        bountyHunt={Object.keys(options).includes('bh')}
         />
     },
     mint: (input: string) => {
@@ -225,7 +227,7 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
 
         return <Withdraw withdrawId={withdrawId} />
     },
-  });
+  }, getStop(location, navigate));
 
 
   export const getCommands = ({ account, location, navigate }: CommandsInput) => {

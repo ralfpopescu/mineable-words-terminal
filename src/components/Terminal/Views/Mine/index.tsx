@@ -7,6 +7,7 @@ import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import { useLocation } from 'react-router-dom'
 import { getQueryParamsFromSearch } from '../../../../utils'
+import { getCurrentBounties } from '../../../../web3-util/methods'
 
 import { FoundWord } from '../../../../utils/word-util'
 import { BigNumber } from "@ethersproject/bignumber";
@@ -23,6 +24,7 @@ export type MineProps = {
     lookingFor?: string[],
     workerCount?: number, 
     minerId: string,
+    bountyHunt: boolean;
 }
 
 const Column = styled.div`
@@ -45,10 +47,11 @@ const WordAndNonce = ({ word, nonce }: { word: string, nonce: BigNumber }) => <d
 
 const flatten = (arr: FoundWord[]) => arr.reduce((acc, curr) => ({ ...acc, [curr.word]: curr.nonce._hex }), {})
 
-export const Mine = ({ initialOffset, lookingFor, workerCount, minerId} : MineProps) => {
+export const Mine = ({ initialOffset, lookingFor, workerCount, minerId, bountyHunt } : MineProps) => {
     const { library, account } = useWeb3React<Web3Provider>();
     const [foundWords, setFoundWords] = useState<FoundWord[]>([]);
     const [ellipses, setEllipses] = useState(1);
+    const [allLookingFor, setAllLookingFor] = useState<string[] | undefined>();
     const location = useLocation();
     const queryParams = getQueryParamsFromSearch(location.search)
 
@@ -86,26 +89,48 @@ export const Mine = ({ initialOffset, lookingFor, workerCount, minerId} : MinePr
 
     let controller: any;
 
-    if (miningStatus === MiningStatus.STOPPED) {
-        console.log('waiting to stop', { miningController })
-      stop();
-    } else if (miningStatus === MiningStatus.WAITING_TO_START) {
-      controller = new MiningController({
-        library: library!,
-        address: account!,
-        workerCount: workerCount || 4,
-        onWordsFound,
-        updateHashRate: setHashRate,
-        lookingFor,
-        startingNonce: initialOffset,
-      });
+    const start = async () => {
+        if (miningStatus === MiningStatus.STOPPED) {
+            console.log('waiting to stop', { miningController })
+          stop();
+        } else if (miningStatus === MiningStatus.WAITING_TO_START) {
+            let bounties;
+            if(bountyHunt) {
+                bounties = await getCurrentBounties({ library: library! });
+            }
 
-      setMiningController(controller);
-      controller.start().catch((e: any) => {
-        console.log("Error mining: " + e);
-        stop();
-      });
+        let lookingForCoalesced: string[] | undefined = (bounties || lookingFor) ? [] : undefined;
+        
+        if(lookingForCoalesced) {
+            if(bounties) {
+                lookingForCoalesced = bounties.map(b => b.decoded);
+            }
+            if(lookingFor) {
+                lookingForCoalesced = [...lookingForCoalesced, ...lookingFor]
+            }
+        }
+
+        setAllLookingFor(lookingForCoalesced)
+    
+          controller = new MiningController({
+            library: library!,
+            address: account!,
+            workerCount: workerCount || 4,
+            onWordsFound,
+            updateHashRate: setHashRate,
+            lookingFor: lookingForCoalesced,
+            startingNonce: initialOffset,
+          });
+    
+          setMiningController(controller);
+          controller.start().catch((e: any) => {
+            console.log("Error mining: " + e);
+            stop();
+          });
+        }
     }
+
+    start();
 
     return () => {
         console.log('unmount')
@@ -130,10 +155,11 @@ export const Mine = ({ initialOffset, lookingFor, workerCount, minerId} : MinePr
                 if(ellipses > 2) setEllipses(0)
                 else setEllipses(e => e + 1);
             }} />
-        {hashRate ? <div>Mining mwords{'.'.repeat(ellipses)}</div> : <div>Starting up the miner...</div>}
+        {hashRate ? <div>Mining mwords{'.'.repeat(ellipses)}</div> : <div>Starting up the miner{'.'.repeat(ellipses)}</div>}
         {<div>Number of workers: {workerCount || 4}</div>}
-        {<div>Hash rate: ~{hashRate || '???'} h/s</div>}
-        {<div>Looking for words: {lookingFor?.join(', ')}</div>}
+        {hashRate && <div>Hash rate: ~{hashRate} h/s</div>}
+        {bountyHunt && <div>Bounty hunt mode on</div>}
+        {allLookingFor && <div>Looking for words: {allLookingFor?.join(', ')}</div>}
        {getFoundMessage(foundWords)}
         <Row><div style={{ marginRight: '8px' }}>Most recent word:</div>{foundWords.length ? 
             <WordAndNonce word={foundWords[foundWords.length - 1].word} nonce={foundWords[foundWords.length - 1].nonce} />: "-----"}
