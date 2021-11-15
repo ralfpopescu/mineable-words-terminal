@@ -121,6 +121,7 @@ export const Mine = ({ initialOffset, lookingFor, workerCount, minerId, bountyHu
         }
 
         setAllLookingFor(lookingForCoalesced)
+        const isBounty = (bounties || []).reduce((acc, curr) => ({ ...acc, [curr.decoded]: true }), {})
     
           controller = new MiningController({
             library: library!,

@@ -26,6 +26,7 @@ export async function mine(
     _rangeStart: BigNumber,
     _rangeEnd: BigNumber,
     _address: BigNumber,
+    isBounty: Obj,
     lookingFor?: Obj,
   ): Promise<FoundWord> {
     const rangeStart = BigNumber.from(_rangeStart._hex);
@@ -38,7 +39,7 @@ export async function mine(
 
       const wordExists = existingWords[word];
 
-      if(wordExists && word.length > 5) {
+      if(wordExists &&( word.length > 5 || isBounty[word])) {
         return { word, nonce, isValid: true }
       };
     }

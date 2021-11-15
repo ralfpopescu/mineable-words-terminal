@@ -28,20 +28,21 @@ export async function mine(
     _rangeStart: BigNumber,
     _rangeEnd: BigNumber,
     _address: BigNumber,
-    lookingFor?: Obj,
+    lookingForMap?: Obj,
   ): Promise<FoundWord[]> {
     const rangeStart = BigNumber.from(_rangeStart._hex);
     const rangeEnd = BigNumber.from(_rangeEnd._hex);
     const address = BigNumber.from(_address._hex);
-    const existingWords = lookingFor ? lookingFor : await getExistingWords();
+    const existingWords = lookingForMap ? {} : await getExistingWords();
+    const lookingFor = lookingForMap ? lookingForMap : {}
     const foundWords = [];
   
     for (let nonce = rangeStart; nonce.lt(rangeEnd); nonce = nonce.add(1)) {
       const hashed = hash({ nonce, address })
       const word = getWordFromHash(hashed)
-      const wordExists = existingWords[word];
+      const wordExists = existingWords[word] || lookingFor[word];
 
-      if(wordExists && word.length > 4) {
+      if(wordExists && (word.length > 4 || lookingFor[word])) {
         console.log({ word, nonce, hashed })
         foundWords.push({ word, nonce, isValid: true })
       };
