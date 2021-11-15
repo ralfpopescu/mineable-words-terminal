@@ -4,7 +4,6 @@ const Command = ({ children }: any) => <span style={{ color: 'yellow' }}>{childr
 
 export const Help = () => (
 <div style={{ display: 'flex', flexDirection: 'column'}}>
-    <br />
     <div>mwords (mineable_words) are NFTs that take the form of words. However, these words cannot simply be claimed - they must be mined! Any piece of text up to length 16 with letters a-z and characters @ ! . _ & ? can be found. You can either mine them yourself right here in the browser, or offer a bounty for others to find them for you. Conversely, you can earn rewards for finding other people’s bounties. Minting costs .009 ETH, but is free if your wallet owns an mpunk <a href="https://www.mpunks.org/faq">(mpunks.org)</a>. Here are a list of commands to get you started:</div>
     <br />
     <Command>clear</Command>
@@ -19,10 +18,16 @@ export const Help = () => (
     <Command>bounty-help</Command>
     <span>Get commands related to creating bounties and earning rewards for finding bounties.</span>
     <Line />
-    <Command>mine [-n numberOfWorkers] [-s startingNonce] [[-w arrayOfWords]]</Command>
-    <span>Start mining for words in the browser using your CPU. If you pass an array of words, the miner will only log when it finds those words. To change number of miner workers, pass a number between 1-8 for for the -n flag. Defaults to 4. If you pass a starting nonce, the miner will start at that number - pass r to start at a random nonce. Defaults to 0.</span>
+    <Command>mine [-n numberOfWorkers] [-s startingNonce] [[-w arrayOfWords]] [-bh]</Command>
+    <span>Start mining for words in the browser using your CPU. </span>
+    <span>If you pass an array of words, the miner will only match on those words. By default, the miner uses an English dictionary of 276k words to match on.</span>
+    <span>To change number of miner workers, pass a number between 1-8 for for the -n flag. Defaults to 4. </span>
+    <span>If you pass a starting nonce, the miner will start at that number - pass r to start at a random nonce. Defaults to 0.</span>
+    <span>Passing -bh enables "Bounty Hunt" mode, where the miner searches for all bounty words. Can be used in conjuction with the -w flag.</span>
+    <br />
     <span>*** example: mine -s 0x123 -w [hello,goodbye] //starts at nonce 0x123 looking for words "hello" and "goodbye"</span>
     <span>*** example: mine -s r -n 8 //starts at a random nonce, spins up 8 worker threads, and saves all words found.</span>
+    <span>*** example: mine -bh -w [cupcake] //searches for the word "cupcake" in addition to all bounty words.</span>
     <span>*** example: mine //default: starts at a 0, spins up 4 worker threads, and saves all words found.</span>
     <Line />
     <Command>stop</Command>
@@ -33,6 +38,7 @@ export const Help = () => (
     <Line />
     <Command>mint [nonce | word]</Command>
     <span>Mints an mword given some nonce, or word if you have found it via the browser miner.</span>
+    <br />
     <span>*** example: mint 0x7482eb</span>
     <span>*** example: mint cool_word</span>
 </div>

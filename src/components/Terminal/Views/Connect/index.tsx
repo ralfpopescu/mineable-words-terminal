@@ -22,8 +22,6 @@ export const Connect = () => {
   }, [account, status, activate])
 
   return (
-    <>
-    <br />
     <GridContainer>
       {!account || !status ? "Connecting now..." : 
       <>
@@ -38,6 +36,5 @@ export const Connect = () => {
           </>
       }
     </GridContainer>
-    </>
   );
 };

@@ -1,7 +1,8 @@
-const errorWrapper = (command: (args: string) => any, stopMining: () => void) => (args: string) => {
+const errorWrapper = (command: (args: string) => any, stopMining: () => void) => async (args: string) => {
     try {
         stopMining();
-        return command(args)
+        const result = await command(args);
+        return <><br/>{result}</>
     } catch(e: any) {
     return `Error encountered: ${e.message}`}
 }

@@ -3,7 +3,6 @@ const Command = ({ children }: any) => <span style={{ color: 'yellow' }}>{childr
 
 export const Info = () => (
 <div style={{ display: 'flex', flexDirection: 'column'}}>
-    <br />
     <Command>faq</Command>
     <span>See frequency asked questions.</span>
     <Line />
