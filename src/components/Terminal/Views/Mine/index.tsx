@@ -151,11 +151,25 @@ export const Mine = ({ initialOffset, lookingFor, workerCount, minerId, bountyHu
     //eslint-ignore-
   }, [miningStatus]);
 
+  const getFoundWordsCount = () => {
+      try {
+          if(foundStorage) {
+              console.log('k')
+            const parsed = JSON.parse(foundStorage);
+            console.log({ parsed })
+            return Object.keys(parsed).length;
+          }
+      } catch (e) {
+          return 0;
+        }
+  }
+
   if(miningStatus === MiningStatus.STOPPED) return (
     <Column>
         <div>{foundWords.map(fw => <WordAndNonce word={fw.word} nonce={fw.nonce} />)}</div>
         <div>Miner stopped.</div>
-        <div>Type "found" to see words you have found.</div>
+        {foundStorage && <div>You have found {getFoundWordsCount()} words across all mining sessions.</div>}
+        <div>Use command "found" to see all words you have found.</div>
     </Column>
   )
 
@@ -176,7 +190,7 @@ export const Mine = ({ initialOffset, lookingFor, workerCount, minerId, bountyHu
         {<Row><Yellow style={{ marginRight: '8px'}}>Last word found: </Yellow>{foundWords.length ? 
             <WordAndNonce word={foundWords[foundWords.length - 1].word} nonce={foundWords[foundWords.length - 1].nonce} />: "-----"}</Row>}
         </GridContainer>
-        {bountyHunt && <div>Bounty hunt mode on</div>}
+        Warning: running any command will stop the miner.
     </Column>
     )
 }

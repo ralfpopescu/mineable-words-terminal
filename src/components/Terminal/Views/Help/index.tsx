@@ -26,7 +26,7 @@ export const Help = () => (
     <span>*** example: mine //default: starts at a 0, spins up 4 worker threads, and saves all words found.</span>
     <Line />
     <Command>stop</Command>
-    <span>Stop mining.</span>
+    <span>Stop mining. Note that running ANY command will stop the miner.</span>
     <Line />
     <Command>found</Command>
     <span>Show all words that you have found. Words are saved to your local storage and persist between sessions.</span>
