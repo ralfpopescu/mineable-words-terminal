@@ -11,6 +11,7 @@ import {
     FoundWords,
     Help,
     Info,
+    Inspect,
     Links,
     Mine,
     Mint,
@@ -18,6 +19,7 @@ import {
     Withdraw,
 } from './Views'
 import { BigNumber } from "@ethersproject/bignumber";
+import * as ethers from 'ethers';
 import { randomBytes } from "@ethersproject/random";
 import { generateNonce, getInvalidCharactersFromWord } from '../../utils/word-util'
 import { assertValidOptions, getOptions, getQueryParamsFromSearch, getNavigationPathFromParams, concatQueryParams, splitOnSpaces, getWordsFromOptions } from '../../utils'
@@ -149,6 +151,21 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
     bounties: () => {
         if(!account) return <div>Need to connect account to view bounties. Use command "connect".</div>
         return <Bounties />
+    },
+    inspect: (input: string) => {
+        if(!account) return <div>Need to connect account to view a wallet's mwords. Use command "connect".</div>
+
+        const options = splitOnSpaces(input);
+
+        if(options.length !== 1) return "Must enter an address to inspect, or 'me' to see your own collection."
+
+        let address = options[0];
+
+        if(address === 'me') address = account;
+
+        if(!ethers.utils.isAddress(address)) return "Invalid address."
+
+        return <Inspect ownerAddress={BigNumber.from(address)}/>
     },
     "bounty-claim": (input: string) => {
         if(!account) return <div>Need to connect account to claim a bounty. Use command "connect".</div>

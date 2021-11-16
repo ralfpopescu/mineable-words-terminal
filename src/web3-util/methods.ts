@@ -46,6 +46,21 @@ export const getAllMWords = async ({ library }: LibraryInput) => {
     return mwords;
 }
 
+interface GetMWordsByOwnerInput extends LibraryInput { ownerAddress: ethers.BigNumber }
+
+export const getMWordsByOwner = async ({ library, ownerAddress }: GetMWordsByOwnerInput) => {
+    const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, library);
+    
+    const ownerSupply = await contract.balanceOf(ownerAddress._hex);
+    const mwords = [];
+    for(let i = 0; i < ownerSupply.toNumber(); i += 1) {
+        const mword = await contract.tokenOfOwnerByIndex(ownerAddress._hex, i);
+        const decoded = getWordFromHash(mword);
+        mwords.push(decoded);
+    }
+    return mwords;
+}
+
 export const getAllDecodedMWords = async ({ library }: LibraryInput): Promise<string[]> => {
     const allMWords = await getAllMWords({ library });
     return Promise.all(allMWords.map(mword => decodeMWord({ library, mword })))
