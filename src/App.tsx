@@ -11,12 +11,16 @@ top: 0;
 left: 0;
 right: 0;
 bottom: 0;
+font-size: 8px;
 `
 
 function App() {
   return (
     <TerminalContextProvider>
       <MemoryRouter>
+      <style>
+@import url('https://fonts.googleapis.com/css2?family=Cutive+Mono&family=Oxygen+Mono&display=swap');
+</style>
     <div className="App">
       <FullScreen>
         <Terminal />

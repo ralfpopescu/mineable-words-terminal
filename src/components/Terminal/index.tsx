@@ -24,12 +24,13 @@ export const Terminal = () => {
       welcomeMessage={welcomeMessage}
       errorMessage={errorMessage}
       prompt={"->"}
+      style={{ fontSize: '8px' }}
       themes={{
         theme: {
           themeBGColor: "#0f0f0f",
           themeToolbarColor: "#DBDBDB",
           themeColor: "#FFFEFC",
-          themePromptColor: "#FFEA00"
+          themePromptColor: "#FFEA00",
         }
       }}
       theme="theme"
