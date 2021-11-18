@@ -1,58 +1,80 @@
-import * as ethers from 'ethers'
-import { useEffect, useState } from 'react'
-import styled from 'styled-components'
+import * as ethers from "ethers";
+import { useEffect, useState } from "react";
+import styled from "styled-components";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
-import { getCurrentBounties, BountyType } from '../../../../web3-util/methods'
-import { Ellipsis } from '../../../Ellipsis'
-import { Line } from '../../../Line'
+import { useLocation, useNavigate } from "react-router-dom";
+import { getQueryParamsFromSearch, addQueryParamsToNavPath } from "../../../../utils";
+import { serializeData, deserializeData } from "../../../../utils/data-utils";
+import { getCurrentBounties, BountyType } from "../../../../web3-util/methods";
+import { Ellipsis } from "../../../Ellipsis";
+import { Line } from "../../../Line";
 
-const Container = styled.div`
-`
+const Container = styled.div``;
 
 const GridContainer = styled.div`
-display: grid;
-grid-template-columns: 200px 300px 500px;
-grid-template-rows: repeat(auto-fit);
-`
+  display: grid;
+  grid-template-columns: 200px 300px 500px;
+  grid-template-rows: repeat(auto-fit);
+`;
 
-export const Bounties = () => {
-    const { library } = useWeb3React<Web3Provider>();
-    const [bounties, setBounties] = useState<BountyType[] | null>(null);
-    console.log({ bounties })
+type BountiesProps = { bountiesId: string };
 
-    useEffect(() => {
-        const getMWords = async () => {
-            if(library && !bounties) {
-                console.log('getting mewords')
-                const mwords = await getCurrentBounties({ library })
-                setBounties(mwords);
-            }
-        };
+export const Bounties = ({ bountiesId }: BountiesProps) => {
+  const { library } = useWeb3React<Web3Provider>();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const queryParams = getQueryParamsFromSearch(location.search);
+  const data = deserializeData<BountyType[] | null>(queryParams[bountiesId]);
+  const [bounties, setBounties] = useState<BountyType[] | null>(data);
 
-        getMWords();
-    },[library, bounties])
+  console.log({ bounties, data });
 
-    return (
+  useEffect(() => {
+    const getMWords = async () => {
+      if (library && !bounties && !data) {
+        console.log("getting bounties");
+        const mwords = await getCurrentBounties({ library });
+        console.log({ mwords });
+        setBounties(mwords);
+        navigate(
+          addQueryParamsToNavPath(
+            { [bountiesId]: serializeData<BountyType>(mwords) },
+            location.search
+          )
+        );
+      }
+    };
+
+    getMWords();
+  }, [library, bounties, bountiesId, location, navigate, data]);
+
+  return (
     <Container>
-    {!bounties && <>Loading current bounties...<Ellipsis /></>}
-    {(bounties && bounties.length === 0) ? 'No bounties yet.' : ''}
-    {bounties?.length && 
+      {!bounties && (
+        <>
+          Loading current bounties...
+          <Ellipsis />
+        </>
+      )}
+      {bounties?.length === 0 ? "No bounties currently." : ""}
+      {bounties?.length && (
         <GridContainer>
-            <div>word</div>
-            <div>offer (ETH)</div>
-            <div>buyer</div>
-            <Line />
-            <Line />
-            <Line />
-            {bounties.map(bounty => (
-                <>
-                    <div>{bounty.decoded}</div>
-                    <div>{ethers.utils.formatEther(bounty.value)}</div>
-                    <div>{bounty.buyer}</div>
-                </>
-            ))}
+          <div>word</div>
+          <div>offer (ETH)</div>
+          <div>buyer</div>
+          <Line />
+          <Line />
+          <Line />
+          {bounties.map((bounty) => (
+            <>
+              <div>{bounty.decoded}</div>
+              <div>{ethers.utils.formatEther(bounty.value)}</div>
+              <div>{bounty.buyer}</div>
+            </>
+          ))}
         </GridContainer>
-        }
+      )}
     </Container>
-)}
+  );
+};
