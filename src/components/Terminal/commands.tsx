@@ -84,8 +84,10 @@ export const commands = ({ account, location, navigate }: CommandsInput) => wrap
         const invalidOptions = assertValidOptions(options, ["s", "n", "w", "bh"]);
         if(invalidOptions) return invalidOptions;
 
+        console.log({ options })
+
         const randomNonce = options.s === 'r' ? BigNumber.from(randomBytes(32)) : undefined;
-        const specifiedNonce = options.s ? BigNumber.from(options.s) : undefined;
+        const specifiedNonce = (options.s && options.s !== 'r') ? BigNumber.from(options.s) : undefined;
         let workerCount = options.n ? parseInt(options.n) : 4;
 
         if(options.s && !specifiedNonce && options.s !== 'r') return "Must specify a valid, positive number or 'r' (for random) if passing a starting nonce."

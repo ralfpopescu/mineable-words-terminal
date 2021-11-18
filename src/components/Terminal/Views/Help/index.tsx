@@ -26,7 +26,7 @@ export const Help = () => (
     <span>Passing -bh enables "Bounty Hunt" mode, where the miner searches for all bounty words. Can be used in conjuction with the -w flag.</span>
     <br />
     <span>*** example: mine -s 0x123 -w [hello,goodbye] //starts at nonce 0x123 looking for words "hello" and "goodbye"</span>
-    <span>*** example: mine -s r -n 8 //starts at a random nonce, spins up 8 worker threads, and saves all words found.</span>
+    <span>*** example: mine -s r -n 8 //starts at a random nonce, spins up 8 worker threads, and saves all words found according to our dictionary.</span>
     <span>*** example: mine -bh -w [cupcake] //searches for the word "cupcake" in addition to all bounty words.</span>
     <span>*** example: mine //default: starts at a 0, spins up 4 worker threads, and saves all words found.</span>
     <Line />

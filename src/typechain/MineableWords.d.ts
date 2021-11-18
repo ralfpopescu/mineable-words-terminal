@@ -36,6 +36,8 @@ interface MineableWordsInterface extends ethers.utils.Interface {
     "getApproved(uint256)": FunctionFragment;
     "initiateBountyRemoval(uint256)": FunctionFragment;
     "isApprovedForAll(address,address)": FunctionFragment;
+    "isMpunkOwner(address)": FunctionFragment;
+    "mineablePunks()": FunctionFragment;
     "mint(uint96)": FunctionFragment;
     "name()": FunctionFragment;
     "offerBounty(uint256)": FunctionFragment;
@@ -108,6 +110,14 @@ interface MineableWordsInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "isApprovedForAll",
     values: [string, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isMpunkOwner",
+    values: [string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "mineablePunks",
+    values?: undefined
   ): string;
   encodeFunctionData(functionFragment: "mint", values: [BigNumberish]): string;
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
@@ -218,6 +228,14 @@ interface MineableWordsInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isMpunkOwner",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "mineablePunks",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
@@ -438,6 +456,10 @@ export class MineableWords extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
+    isMpunkOwner(sender: string, overrides?: CallOverrides): Promise<[boolean]>;
+
+    mineablePunks(overrides?: CallOverrides): Promise<[string]>;
+
     mint(
       nonce: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -611,6 +633,10 @@ export class MineableWords extends BaseContract {
     overrides?: CallOverrides
   ): Promise<boolean>;
 
+  isMpunkOwner(sender: string, overrides?: CallOverrides): Promise<boolean>;
+
+  mineablePunks(overrides?: CallOverrides): Promise<string>;
+
   mint(
     nonce: BigNumberish,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -771,6 +797,10 @@ export class MineableWords extends BaseContract {
       operator: string,
       overrides?: CallOverrides
     ): Promise<boolean>;
+
+    isMpunkOwner(sender: string, overrides?: CallOverrides): Promise<boolean>;
+
+    mineablePunks(overrides?: CallOverrides): Promise<string>;
 
     mint(nonce: BigNumberish, overrides?: CallOverrides): Promise<void>;
 
@@ -1000,6 +1030,10 @@ export class MineableWords extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    isMpunkOwner(sender: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    mineablePunks(overrides?: CallOverrides): Promise<BigNumber>;
+
     mint(
       nonce: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -1171,6 +1205,13 @@ export class MineableWords extends BaseContract {
       operator: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
+
+    isMpunkOwner(
+      sender: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    mineablePunks(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     mint(
       nonce: BigNumberish,
