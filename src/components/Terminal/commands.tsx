@@ -74,7 +74,12 @@ export const commands = ({ account, location, navigate }: CommandsInput) =>
           return (
             <div>Need to connect account to see recently mined mwords. Use command "connect".</div>
           );
-        return <RecentlyMined />;
+
+        const recentId = `recentId-${generateNonce(12)}`;
+        const concat = concatQueryParams(location.search, `${recentId}=0`);
+        navigate(concat);
+
+        return <RecentlyMined recentId={recentId} />;
       },
       links: () => <Links />,
       info: () => <Info />,
@@ -176,6 +181,7 @@ export const commands = ({ account, location, navigate }: CommandsInput) =>
       bounties: () => {
         if (!account)
           return <div>Need to connect account to view bounties. Use command "connect".</div>;
+
         const bountiesId = `bountiesId-${generateNonce(12)}`;
         const concat = concatQueryParams(location.search, `${bountiesId}=0`);
         navigate(concat);
