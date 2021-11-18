@@ -96,7 +96,13 @@ export const commands = ({ account, location, navigate }: CommandsInput) =>
 
         return <Calculations hashRate={hashRate} lengthOfWord={lengthOfWord} />;
       },
-      connect: async () => <Connect />,
+      connect: async () => {
+        const connectId = `connectId-${generateNonce(12)}`;
+        const concat = concatQueryParams(location.search, `${connectId}=0`);
+        navigate(concat);
+
+        return <Connect connectId={connectId} />;
+      },
       stop: getStop(location, navigate),
       mine: async (input: string) => {
         console.log({ input });

@@ -39,7 +39,7 @@ export const Bounties = ({ bountiesId }: BountiesProps) => {
         setBounties(mwords);
         navigate(
           addQueryParamsToNavPath(
-            { [bountiesId]: serializeData<BountyType>(mwords) },
+            { [bountiesId]: serializeData<BountyType[]>(mwords) },
             location.search
           )
         );

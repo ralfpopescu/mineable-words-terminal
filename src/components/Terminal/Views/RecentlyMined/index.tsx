@@ -27,7 +27,7 @@ export const RecentlyMined = ({ recentId }: RecentlyMinedProps) => {
         const mwords = await getAllDecodedMWords({ library });
         setRecentlyMined(mwords);
         navigate(
-          addQueryParamsToNavPath({ [recentId]: serializeData<string>(mwords) }, location.search)
+          addQueryParamsToNavPath({ [recentId]: serializeData<string[]>(mwords) }, location.search)
         );
       }
     };
