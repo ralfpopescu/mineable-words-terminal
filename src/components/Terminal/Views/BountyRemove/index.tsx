@@ -16,8 +16,6 @@ export const attemptBountyRemove = async function (
   const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, lib);
   try {
     const signer = lib.getSigner();
-    //   const numMined = await contract.numMined();
-    const numMined = 100;
     const tx = await contract.connect(signer).removeBounty(encodedWord);
     return tx.hash;
   } catch (e: any) {
