@@ -16,12 +16,20 @@ type ConnectProps = { connectId: string };
 export const Connect = ({ connectId }: ConnectProps) => {
   const {
     status,
-    provider: { account, activate },
+    provider: { account, activate, error },
   } = useEagerWithRemoteFallback();
 
   useEffect(() => {
     if (!account || !status) activate(injectedConnector);
   }, [account, status, activate]);
+
+  if (error)
+    return (
+      <div>
+        Could not connect to web3. Do you have an Ethereum provider? Recommended:{" "}
+        <a href="https://metamask.io/">Metamask</a>{" "}
+      </div>
+    );
 
   return (
     <GridContainer>
