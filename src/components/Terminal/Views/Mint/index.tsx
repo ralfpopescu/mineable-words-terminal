@@ -16,16 +16,8 @@ export const attemptMint = async function (
   nonce: ethers.BigNumber
 ): Promise<string> {
   const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, lib);
-  console.log(contract);
-  console.log(contract.filters);
-  const filters = await contract.queryFilter(
-    contract.filters.Transfer("0x0000000000000000000000000000000000000000")
-  );
-  console.log({ filters });
   try {
     const signer = lib.getSigner();
-    //   const numMined = await contract.numMined();
-    const numMined = 100;
     const ownsMpunk = await isMPunkOwner({
       library: lib,
       ownerAddress: ethers.BigNumber.from(account),
@@ -34,7 +26,6 @@ export const attemptMint = async function (
     const value = ownsMpunk ? 0 : 9000000000000000;
 
     const tx = await contract.connect(signer).mint(nonce.toHexString(), {
-      gasLimit: (numMined + 1) % 33 === 0 ? 1400000 : 700000,
       value,
     });
     return tx.hash;

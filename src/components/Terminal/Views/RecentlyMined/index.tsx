@@ -23,7 +23,6 @@ export const RecentlyMined = ({ recentId }: RecentlyMinedProps) => {
   useEffect(() => {
     const getMWords = async () => {
       if (library && !recentlyMined) {
-        console.log("getting mewords");
         const mwords = await getAllDecodedMWords({ library });
         setRecentlyMined(mwords);
         navigate(

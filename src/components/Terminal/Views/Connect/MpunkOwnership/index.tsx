@@ -21,7 +21,6 @@ export const MPunkOwnershipStatus = ({ connectId }: ConnectProps) => {
   useEffect(() => {
     const getStatus = async () => {
       if (library && isOwner === null) {
-        console.log("getting mewords");
         const isMpunkOwner = await isMPunkOwner({
           library,
           ownerAddress: ethers.BigNumber.from(account),

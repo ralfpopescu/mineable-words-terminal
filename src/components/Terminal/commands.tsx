@@ -105,7 +105,6 @@ export const commands = ({ account, location, navigate }: CommandsInput) =>
       },
       stop: getStop(location, navigate),
       mine: async (input: string) => {
-        console.log({ input });
         if (!account)
           return <div>Need to connect account to mine mwords. Use command "connect".</div>;
 
@@ -239,8 +238,6 @@ export const commands = ({ account, location, navigate }: CommandsInput) =>
 
         const word = options[0];
         const offer = options[1];
-
-        console.log({ word, length: word.length });
 
         if (getInvalidCharactersFromWord(word).length)
           return getInvalidCharactersMessage(getInvalidCharactersFromWord(word));

@@ -28,14 +28,10 @@ export const Bounties = ({ bountiesId }: BountiesProps) => {
   const data = deserializeData<BountyType[] | null>(queryParams[bountiesId]);
   const [bounties, setBounties] = useState<BountyType[] | null>(data);
 
-  console.log({ bounties, data });
-
   useEffect(() => {
     const getMWords = async () => {
       if (library && !bounties && !data) {
-        console.log("getting bounties");
         const mwords = await getCurrentBounties({ library });
-        console.log({ mwords });
         setBounties(mwords);
         navigate(
           addQueryParamsToNavPath(

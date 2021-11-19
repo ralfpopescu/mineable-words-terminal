@@ -1,17 +1,14 @@
-import {MineableWords__factory} from "../typechain";
+import { MineableWords__factory } from "../typechain";
 import * as ethers from "ethers";
-import {MINEABLEWORDS_ADDR} from "../web3-util/config";
-import {getWordFromHash} from "../utils/word-util";
+import { MINEABLEWORDS_ADDR } from "../web3-util/config";
+import { getWordFromHash } from "../utils/word-util";
 
 export const generateNonce = (length: number) => {
   const result = [];
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   const charactersLength = characters.length;
   for (let i = 0; i < length; i += 1) {
-    result.push(
-      characters.charAt(Math.floor(Math.random() * charactersLength))
-    );
+    result.push(characters.charAt(Math.floor(Math.random() * charactersLength)));
   }
   const nonce = result.join("");
   return nonce;
@@ -31,10 +28,7 @@ interface EncodeMWordInput extends LibraryInput {
   word: string;
 }
 
-export const decodeMWord = async ({
-  library,
-  mword,
-}: DecodeMWordInput): Promise<string> => {
+export const decodeMWord = async ({ library, mword }: DecodeMWordInput): Promise<string> => {
   const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, library);
   const decoded = await contract.decodeMword(mword);
   return decoded;
@@ -49,7 +43,7 @@ export const encodeMWord = async ({
   return encoded;
 };
 
-export const getAllMWords = async ({library}: LibraryInput) => {
+export const getAllMWords = async ({ library }: LibraryInput) => {
   const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, library);
 
   const totalSupply = await contract.totalSupply();
@@ -74,10 +68,7 @@ export const isMPunkOwner = async ({
   return isMpunkOwner;
 };
 
-export const getMWordsByOwner = async ({
-  library,
-  ownerAddress,
-}: GetByOwnerInput) => {
+export const getMWordsByOwner = async ({ library, ownerAddress }: GetByOwnerInput) => {
   const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, library);
 
   const ownerSupply = await contract.balanceOf(ownerAddress._hex);
@@ -90,21 +81,16 @@ export const getMWordsByOwner = async ({
   return mwords;
 };
 
-export const getAllDecodedMWords = async ({
-  library,
-}: LibraryInput): Promise<string[]> => {
-  const allMWords = await getAllMWords({library});
-  return Promise.all(allMWords.map((mword) => decodeMWord({library, mword})));
+export const getAllDecodedMWords = async ({ library }: LibraryInput): Promise<string[]> => {
+  const allMWords = await getAllMWords({ library });
+  return Promise.all(allMWords.map((mword) => decodeMWord({ library, mword })));
 };
 
 export const getAllBountiesOffered = async ({
   library,
 }: LibraryInput): Promise<ethers.BigNumber[]> => {
   const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, library);
-  console.log(contract.filters);
-  const bountiesOffered = await contract.queryFilter(
-    contract.filters.BountyOffered(null)
-  );
+  const bountiesOffered = await contract.queryFilter(contract.filters.BountyOffered(null));
   return bountiesOffered.map((b) => b.args.mword);
 };
 
@@ -112,9 +98,7 @@ export const getAllBountiesRemoved = async ({
   library,
 }: LibraryInput): Promise<ethers.BigNumber[]> => {
   const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, library);
-  const bountiesRemoved = await contract.queryFilter(
-    contract.filters.BountyRemoval(null)
-  );
+  const bountiesRemoved = await contract.queryFilter(contract.filters.BountyRemoval(null));
   return bountiesRemoved.map((b) => b.args.mword);
 };
 
@@ -127,7 +111,7 @@ export type BountyType = {
   decoded: string;
 };
 
-type getBountyFromMwordInput = LibraryInput & {mword: ethers.BigNumber};
+type getBountyFromMwordInput = LibraryInput & { mword: ethers.BigNumber };
 
 export const getBountyFromMword = async ({
   library,
@@ -135,20 +119,16 @@ export const getBountyFromMword = async ({
 }: getBountyFromMwordInput): Promise<BountyType> => {
   const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, library);
   const bounty = await contract.bounties(mword);
-  return {...bounty, mword, decoded: getWordFromHash(mword)};
+  return { ...bounty, mword, decoded: getWordFromHash(mword) };
 };
 
-export const getCurrentBounties = async ({
-  library,
-}: LibraryInput): Promise<BountyType[]> => {
-  const offered = await getAllBountiesOffered({library});
-  const removed = await getAllBountiesRemoved({library});
-
-  console.log({offered, removed});
+export const getCurrentBounties = async ({ library }: LibraryInput): Promise<BountyType[]> => {
+  const offered = await getAllBountiesOffered({ library });
+  const removed = await getAllBountiesRemoved({ library });
 
   return Promise.all(
     offered
       .filter((o) => !removed.some((r) => r._hex === o._hex))
-      .map((mword) => getBountyFromMword({library, mword}))
+      .map((mword) => getBountyFromMword({ library, mword }))
   );
 };
