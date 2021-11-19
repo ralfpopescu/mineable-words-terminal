@@ -78,9 +78,9 @@ export const Mine = ({
   const location = useLocation();
   const queryParams = getQueryParamsFromSearch(location.search);
 
-  //@ts-ignore
   const miningStatus: any = queryParams[minerId]
-    ? parseInt(queryParams[minerId])
+    ? //@ts-ignore
+      parseInt(queryParams[minerId])
     : MiningStatus.STOPPED;
 
   const [miningController, setMiningController] = useState<MiningController | null>(null);
@@ -229,8 +229,8 @@ export const Mine = ({
           <div>
             {allLookingFor ? (
               <>
-                <Yellow>Looking for words:</Yellow>
-                {allLookingFor?.join(", ")}`
+                <Yellow>Looking for words: </Yellow>
+                {allLookingFor?.join(", ")}
               </>
             ) : (
               <Yellow>Finding all words</Yellow>

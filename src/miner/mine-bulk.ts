@@ -9,14 +9,16 @@ export const getExistingWords = async (): Promise<Obj> => {
   if (cachedData) {
     return cachedData;
   }
-  const data = await axios.get("https://api.achievemints.io/existing-words", {
+  const host = process.env.REACT_APP_HOST;
+  const data = await axios.get(`${host}/existing-words.json`, {
     headers: {
       "Access-Control-Allow-Origin": "*",
       "Content-Type": "application/json",
     },
   });
   cachedData = data.data;
-  return data.data;
+  console.log({ cachedData });
+  return cachedData;
 };
 
 export type FoundWord = { word: string; nonce: BigNumber; isValid: boolean };
@@ -31,6 +33,7 @@ export async function mine(
   const rangeEnd = BigNumber.from(_rangeEnd._hex);
   const address = BigNumber.from(_address._hex);
   const existingWords = lookingForMap ? {} : await getExistingWords();
+  console.log({ lookingForMap, existingWords });
   const lookingFor = lookingForMap ? lookingForMap : {};
   const foundWords = [];
 
