@@ -1,6 +1,7 @@
 import { BigNumber } from "@ethersproject/bignumber";
 import axios from "axios";
 import { getWordFromHash, hash } from "../utils/word-util";
+import { hosts } from "../web3-util/config";
 
 let cachedData: any;
 type Obj = { [key: string]: boolean };
@@ -9,8 +10,7 @@ export const getExistingWords = async (): Promise<Obj> => {
   if (cachedData) {
     return cachedData;
   }
-  const host = process.env.REACT_APP_HOST;
-  const data = await axios.get(`${host}/existing-words.json`, {
+  const data = await axios.get(`${hosts.PROD}/existing-words.json`, {
     headers: {
       "Access-Control-Allow-Origin": "*",
       "Content-Type": "application/json",

@@ -28,3 +28,8 @@ export const network = (process.env.REACT_APP_NETWORK as keyof Networks) || ("LO
 
 export const MINEABLEWORDS_ADDR =
   contractAddresses[network] || "0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0";
+
+export const hosts = {
+  LOCAL: "http://localhost:3000",
+  PROD: "https://www.mwords.org",
+};
