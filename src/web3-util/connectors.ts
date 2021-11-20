@@ -7,13 +7,15 @@ export const injectedConnector = new InjectedConnector({
     chainIds.MAINNET,
     chainIds.ROPSTEN,
     chainIds.LOCAL,
+    chainIds.RINKEBY,
   ],
 });
 
 export const networkConnector = new NetworkConnector({
   urls: {
-    1: chainUrls.MAINNET,
-    3: chainUrls.ROPSTEN,
+    [chainIds.MAINNET]: chainUrls.MAINNET,
+    [chainIds.ROPSTEN]: chainUrls.ROPSTEN,
+    [chainIds.RINKEBY]: chainUrls.RINKEBY,
   },
   defaultChainId: 1,
 });
