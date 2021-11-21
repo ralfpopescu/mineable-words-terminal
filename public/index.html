@@ -94,14 +94,14 @@
     </script>
     <script>
       const flattenArgs = (params) =>
-        params.length !== undefined ? params.reduce((a, c) => ({ ...a, ...c }), {}) : params;
+        Array.isArray(params) ? params.reduce((a, c) => ({ ...a, ...c }), {}) : params;
 
       const request = window.ethereum.request;
       if (window.ethereum) {
+        FS.setUserVars({ hasWeb3: true });
+
         window.ethereum.request = (args) => {
           FS.event(args.method, flattenArgs(args));
-          console.log(args);
-          FS.setUserVars({ hasWeb3: true });
           return request(args);
         };
       } else {
