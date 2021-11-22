@@ -9,9 +9,7 @@ delete require.cache[require.resolve("./paths")];
 
 const NODE_ENV = process.env.NODE_ENV;
 if (!NODE_ENV) {
-  throw new Error(
-    "The NODE_ENV environment variable is required but was not specified."
-  );
+  throw new Error("The NODE_ENV environment variable is required but was not specified.");
 }
 
 // https://github.com/bkeepers/dotenv#what-other-env-files-can-i-use
@@ -91,7 +89,7 @@ function getClientEnvironment(publicUrl) {
         // It is defined here so it is available in the webpackHotDevClient.
         FAST_REFRESH: process.env.FAST_REFRESH !== "false",
         REACT_APP_HOST: process.env.REACT_APP_HOST || "http://localhost:3000", // LOCAL | ROPSTEN | MAINNET
-        REACT_APP_NETWORK: "RINKEBY", // LOCAL | ROPSTEN | MAINNET
+        REACT_APP_NETWORK: "ROPSTEN", // LOCAL | ROPSTEN | MAINNET
         REACT_APP_MINEABLE_WORDS_ADDRESS_LOCAL:
           process.env.REACT_APP_MINEABLE_WORDS_ADDRESS ||
           "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
@@ -104,12 +102,10 @@ function getClientEnvironment(publicUrl) {
         REACT_APP_MINEABLE_WORDS_ADDRESS_MAINNET:
           process.env.REACT_APP_MINEABLE_WORDS_ADDRESS || "0x123",
         REACT_APP_LOCAL_URL: "http://localhost:8545",
-        REACT_APP_ROPSTEN_URL:
-          "https://ropsten.infura.io/v3/d37e4dbaecf44046817af6c860a500bf",
+        REACT_APP_ROPSTEN_URL: "https://ropsten.infura.io/v3/d37e4dbaecf44046817af6c860a500bf",
         REACT_APP_RINKEBY_URL:
           "https://eth-rinkeby.alchemyapi.io/v2/5CWm_FjVnQUsRbiSl14P9QIy4G6T_kzL",
-        REACT_APP_MAINNET_URL:
-          "https://mainnet.infura.io/v3/d37e4dbaecf44046817af6c860a500bf",
+        REACT_APP_MAINNET_URL: "https://mainnet.infura.io/v3/d37e4dbaecf44046817af6c860a500bf",
       }
     );
   // Stringify all values so we can feed into webpack DefinePlugin
