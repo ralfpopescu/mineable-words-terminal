@@ -37,9 +37,9 @@ type UseFullStoryWeb3Args = { orgId: string; abi: object[] };
 export const useFullStoryWeb3 = ({ orgId, abi }: UseFullStoryWeb3Args) => {
   useEffect(() => {
     FullStory.init({ orgId });
-    const request = window.ethereum.request;
 
     if (window.ethereum) {
+      const request = window.ethereum.request;
       abiDecoder.addABI(abi);
       FullStory.setUserVars({ hasWeb3: true });
 
