@@ -16,7 +16,7 @@ export const getExistingWords = async (): Promise<Obj> => {
   if (cachedData) {
     return cachedData;
   }
-  const data = await axios.get(`${hosts.LOCAL}/hashed-words.json`, {
+  const data = await axios.get(`${hosts.PROD}/hashed-words.json`, {
     headers: {
       "Access-Control-Allow-Origin": "*",
       "Content-Type": "application/json",
