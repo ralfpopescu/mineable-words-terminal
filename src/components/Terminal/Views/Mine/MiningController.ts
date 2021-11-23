@@ -3,7 +3,7 @@ import { Web3Provider } from "@ethersproject/providers";
 import { BigNumber } from "ethers";
 import { FoundWord } from "../../../../utils/word-util";
 
-const createWorker = createWorkerFactory(() => import("../../../../miner/mine-bulk"));
+const createWorker = createWorkerFactory(() => import("../../../../miner/mine-hashed"));
 
 type MiningControllerConstructorArgs = {
   library: Web3Provider;
@@ -11,8 +11,8 @@ type MiningControllerConstructorArgs = {
   workerCount: number;
   onWordsFound: (words: FoundWord[]) => void;
   updateHashRate: (rate: number) => void;
-  lookingFor?: string[],
-  startingNonce?: BigNumber,
+  lookingFor?: string[];
+  startingNonce?: BigNumber;
 };
 
 export default class MiningController {
@@ -28,7 +28,7 @@ export default class MiningController {
   }
 
   async start(): Promise<void> {
-      console.log('Starting miner')
+    console.log("Starting miner");
     let lastFetchTime = Date.now() / 1000;
 
     for (var i = 0; i < this.args.workerCount; i++) {
@@ -36,9 +36,7 @@ export default class MiningController {
       this.workers.push(worker);
     }
 
-    const rangeLength = BigNumber.from("0x0000000007ab5b000100000").div(
-      this.workers.length
-    );
+    const rangeLength = BigNumber.from("0x0000000007ab5b000100000").div(this.workers.length);
 
     const notificationRate = 25000;
 
@@ -58,21 +56,27 @@ export default class MiningController {
       }
 
       const workerThreads = [];
-      const lookingForMap = this.args.lookingFor?.reduce((acc, curr) => ({ ...acc, [curr]: true }), {})
+      const lookingForMap = this.args.lookingFor?.reduce(
+        (acc, curr) => ({ ...acc, [curr]: true }),
+        {}
+      );
 
-      for (
-        var workerIndex = 0;
-        workerIndex < this.workers.length;
-        workerIndex++
-      ) {
+      for (var workerIndex = 0; workerIndex < this.workers.length; workerIndex++) {
         const worker = this.workers[workerIndex];
 
         workerThreads.push(
           worker.mine(
-            rangeLength.mul(workerIndex).add(rangeBegin).add(this.args.startingNonce || 0),
-            rangeLength.mul(workerIndex).add(rangeBegin).add(this.args.startingNonce || 0).add(notificationRate),
+            rangeLength
+              .mul(workerIndex)
+              .add(rangeBegin)
+              .add(this.args.startingNonce || 0),
+            rangeLength
+              .mul(workerIndex)
+              .add(rangeBegin)
+              .add(this.args.startingNonce || 0)
+              .add(notificationRate),
             BigNumber.from(this.args.address),
-            lookingForMap,
+            lookingForMap
           )
         );
       }
@@ -85,10 +89,10 @@ export default class MiningController {
         this.args.updateHashRate(this.getHashRate());
       }
 
-      const validResults = results.reduce((acc, curr) => [...acc, ...curr])
+      const validResults = results.reduce((acc, curr) => [...acc, ...curr]);
 
       if (validResults.length > 0) {
-          //@ts-ignore
+        //@ts-ignore
         this.args.onWordsFound(validResults as FoundWord[]);
       }
     }

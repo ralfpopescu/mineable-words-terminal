@@ -163,22 +163,47 @@ export const getHashFromWord = (word: string): BigNumber => {
   return sum;
 };
 
-// const normalizeWord = (word: BigNumber) => {
-//   const lengthMask =  BigNumber.from(`0xf`);
-//   const letterMask = BigNumber.from("0x1f")
+const getWordLengthMasks = () => {
+  const wordLengthMasks = [];
+  //clear first 4 bits
+  const emptyBitsMask = BigNumber.from(`0x0${"f".repeat(84 / 4)}`);
+  const fullMask = BigNumber.from(`0x${"f".repeat(88 / 4)}`);
 
-//   const wordLengthMask = LENGTH_MASK | (CHAR_MASK << (80 - 5));
-//         for (uint8 i = 0; i < 16; i++) {
-//             wordLengthMask = wordLengthMask | (CHAR_MASK << (80 - (5 * (i + 1))));
-//             wordLengthMasks.push(wordLengthMask);
-//         }
-// }
+  for (let i = 0; i <= 15; i += 1) {
+    const wordLengthMask = fullMask.shl((15 - i) * 5);
+    wordLengthMasks.push(wordLengthMask.and(emptyBitsMask));
+  }
+  return wordLengthMasks;
+};
+
+const wordLengthMasks = getWordLengthMasks();
+
+export const normalizeWordHash = (hash: BigNumber) => {
+  const length = getWordLengthFromHash(hash);
+  const mask = wordLengthMasks[length - 1];
+  return hash.and(mask);
+};
 
 type WordMapToHashMapInput = { wordMap: { [key: string]: boolean } };
 
 export const wordMapToHashMap = ({ wordMap }: WordMapToHashMapInput) => {
   const words = Object.keys(wordMap);
-  return words
-    .map((word) => getHashFromWord(word))
-    .reduce((acc, curr) => ({ ...acc, [curr._hex]: true }), {});
+  const processed = words.map((word, i) => {
+    try {
+      if (word.length <= 16) {
+        return getHashFromWord(word);
+      }
+      return { _hex: "" };
+    } catch (e) {
+      console.log(e, word);
+      return { _hex: "" };
+    }
+  });
+  const filtered = processed.filter((hashed) => hashed._hex !== "");
+  const reduced = filtered.reduce((acc, curr, i) => {
+    if (i % 50 === 0) console.log(i);
+    acc[curr._hex] = true;
+    return acc;
+  }, {} as { [key: string]: true });
+  return reduced;
 };

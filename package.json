@@ -96,6 +96,7 @@
     "build-script": "node scripts/build.js",
     "test-jest": "jest",
     "lint": "eslint ./src",
+    "transform": "ts-node ./src/utils/transform-existing-words.ts",
     "test": "node scripts/test.js"
   },
   "eslintConfig": {
