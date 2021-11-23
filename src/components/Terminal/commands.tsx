@@ -104,7 +104,7 @@ export const commands = ({ account, location, navigate }: CommandsInput) =>
         return <Connect connectId={connectId} />;
       },
       stop: getStop(location, navigate),
-      mine: async (input: string) => {
+      "mine-advanced": async (input: string) => {
         if (!account)
           return <div>Need to connect account to mine mwords. Use command "connect".</div>;
 
@@ -112,13 +112,18 @@ export const commands = ({ account, location, navigate }: CommandsInput) =>
         const invalidOptions = assertValidOptions(options, ["s", "n", "w", "bh"]);
         if (invalidOptions) return invalidOptions;
 
-        const randomNonce = options.s === "r" ? BigNumber.from(randomBytes(32)) : undefined;
-        const specifiedNonce =
-          options.s && options.s !== "r" ? BigNumber.from(options.s) : undefined;
-        let workerCount = options.n ? parseInt(options.n) : 4;
+        const randomNonce = BigNumber.from(randomBytes(32)).shr(200);
 
-        if (options.s && !specifiedNonce && options.s !== "r")
-          return "Must specify a valid, positive number or 'r' (for random) if passing a starting nonce.";
+        let specifiedNonce;
+        if (options.s) {
+          try {
+            specifiedNonce = BigNumber.from(options.s);
+          } catch (e) {
+            return "Specified nonce must be a number.";
+          }
+        }
+        const defaultWorkerCount = window.navigator?.hardwareConcurrency || 4;
+        let workerCount = options.n ? parseInt(options.n) : defaultWorkerCount;
 
         const wordOptions = options.w;
         let words;
@@ -134,7 +139,7 @@ export const commands = ({ account, location, navigate }: CommandsInput) =>
           words = processedWordOptions;
         }
 
-        const startingNonce = randomNonce || specifiedNonce || BigNumber.from(0);
+        const startingNonce = specifiedNonce || randomNonce || BigNumber.from(0);
 
         const minerId = `miner-${generateNonce(12)}`;
 
@@ -144,9 +149,41 @@ export const commands = ({ account, location, navigate }: CommandsInput) =>
           <Mine
             workerCount={workerCount}
             initialOffset={startingNonce}
+            dictionaryMode={words ? words.length > 0 : true}
             lookingFor={words}
             minerId={minerId}
             bountyHunt={Object.keys(options).includes("bh")}
+          />
+        );
+      },
+      mine: async (input: string) => {
+        if (!account)
+          return <div>Need to connect account to mine mwords. Use command "connect".</div>;
+
+        const randomNonce = BigNumber.from(randomBytes(32)).shr(200);
+        let workerCount = window.navigator?.hardwareConcurrency || 4;
+
+        const words = input
+          .split(",")
+          .map((w) => w.replace(/\s+/g, ""))
+          .filter((w) => w !== "");
+        console.log({ input, words });
+
+        const invalidCharacters = words.map((word) => getInvalidCharactersFromWord(word)).flat();
+        if (invalidCharacters.length) return getInvalidCharactersMessage(invalidCharacters);
+
+        const minerId = `miner-${generateNonce(12)}`;
+
+        navigate(concatQueryParams(location.search, `${minerId}=0`));
+
+        return (
+          <Mine
+            workerCount={workerCount}
+            initialOffset={randomNonce}
+            lookingFor={words.length ? words : undefined}
+            minerId={minerId}
+            dictionaryMode={words.length > 0}
+            bountyHunt={true}
           />
         );
       },

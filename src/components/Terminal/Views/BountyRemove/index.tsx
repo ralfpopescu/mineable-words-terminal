@@ -54,7 +54,11 @@ export const BountyRemove = ({ word, bountyRemoveId }: BountyRemoveProps) => {
   return (
     <div>
       Completing bounty removal on {word}...
-      {status === TxStatus.SUCCESS.toString() && <div>Successfully retrieved bounty funds.</div>}
+      {status === TxStatus.SUCCESS.toString() && (
+        <div>
+          Successfully initiated bounty fund retrieval. Check tx status in your Ethereum provider.
+        </div>
+      )}
       {status === TxStatus.FAILED.toString() && (
         <div>Denied transaction or otherwise encountered error.</div>
       )}

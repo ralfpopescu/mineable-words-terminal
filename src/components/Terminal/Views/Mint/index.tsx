@@ -1,5 +1,6 @@
 import * as ethers from "ethers";
 import { useEffect } from "react";
+import styled from "styled-components";
 import { useWeb3React } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import { MineableWords__factory } from "../../../../typechain";
@@ -9,6 +10,10 @@ import { getQueryParamsFromSearch, addQueryParamsToNavPath } from "../../../../u
 import { TxStatus } from "../../../../utils/statuses";
 import { MINEABLEWORDS_ADDR } from "../../../../web3-util/config";
 import { isMPunkOwner } from "../../../../web3-util/methods";
+
+const Yellow = styled.span`
+  color: yellow;
+`;
 
 export const attemptMint = async function (
   lib: Web3Provider,
@@ -63,9 +68,14 @@ export const Mint = ({ nonce, mintId }: MintProps) => {
 
   return (
     <div>
-      Minting mword {getWordFromNonceAndAddress({ nonce, address: ethers.BigNumber.from(account) })}{" "}
+      Minting mword{" "}
+      <Yellow>
+        {getWordFromNonceAndAddress({ nonce, address: ethers.BigNumber.from(account) })}{" "}
+      </Yellow>
       -- {nonce._hex}
-      {status === TxStatus.SUCCESS.toString() && <div>Successfully minted.</div>}
+      {status === TxStatus.SUCCESS.toString() && (
+        <div>Successfully initiated mint. Check tx status in your Ethereum provider.</div>
+      )}
       {status === TxStatus.FAILED.toString() && (
         <div>Denied transaction or otherwise encountered error.</div>
       )}

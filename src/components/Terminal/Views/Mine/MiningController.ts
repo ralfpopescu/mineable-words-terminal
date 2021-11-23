@@ -13,6 +13,7 @@ type MiningControllerConstructorArgs = {
   updateHashRate: (rate: number) => void;
   lookingFor?: string[];
   startingNonce?: BigNumber;
+  dictionaryMode: boolean;
 };
 
 export default class MiningController {
@@ -76,6 +77,7 @@ export default class MiningController {
               .add(this.args.startingNonce || 0)
               .add(notificationRate),
             BigNumber.from(this.args.address),
+            this.args.dictionaryMode,
             lookingForMap
           )
         );

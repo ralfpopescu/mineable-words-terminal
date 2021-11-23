@@ -46,7 +46,11 @@ export const Withdraw = ({ withdrawId }: BounterOfferProps) => {
   return (
     <div>
       Withdrawing your funds...
-      {status === TxStatus.SUCCESS.toString() && <div>Successfully withdrew funds.</div>}
+      {status === TxStatus.SUCCESS.toString() && (
+        <div>
+          Successfully initiated fund withdrawal. Check tx status in your Ethereum provider.
+        </div>
+      )}
       {status === TxStatus.FAILED.toString() && (
         <div>Denied transaction or otherwise encountered error.</div>
       )}

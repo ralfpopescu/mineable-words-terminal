@@ -16,7 +16,7 @@ export const getExistingWords = async (): Promise<Obj> => {
   if (cachedData) {
     return cachedData;
   }
-  const data = await axios.get(`${hosts.PROD}/hashed-words.json`, {
+  const data = await axios.get(`${hosts.LOCAL}/hashed-words.json`, {
     headers: {
       "Access-Control-Allow-Origin": "*",
       "Content-Type": "application/json",
@@ -32,15 +32,16 @@ export async function mine(
   _rangeStart: BigNumber,
   _rangeEnd: BigNumber,
   _address: BigNumber,
+  dictionaryMode: boolean,
   lookingForMap?: { [key: string]: true }
 ): Promise<FoundWord[]> {
   const rangeStart = BigNumber.from(_rangeStart._hex);
   const rangeEnd = BigNumber.from(_rangeEnd._hex);
   const address = BigNumber.from(_address._hex);
-  const existingWords = lookingForMap ? {} : await getExistingWords();
+  const existingWords = dictionaryMode ? {} : await getExistingWords();
+  console.log({ lookingForMap });
   const lookingFor = lookingForMap ? wordMapToHashMap({ wordMap: lookingForMap }) : {};
   const foundWords = [];
-  console.log({ lookingForMap, lookingFor, existingWords });
 
   for (let nonce = rangeStart; nonce.lt(rangeEnd); nonce = nonce.add(1)) {
     const hashed = hash({ nonce, address });

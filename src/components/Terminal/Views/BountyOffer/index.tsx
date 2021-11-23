@@ -81,7 +81,9 @@ export const BountyOffer = ({ word, offer, bountyOfferId }: BounterOfferProps) =
         Caution: if you want to retrieve your bounty funds, there will be a 100 blocks delay where
         your bounty can still be claimed.
       </div>
-      {status === TxStatus.SUCCESS.toString() && <div>Successfully offered bounty.</div>}
+      {status === TxStatus.SUCCESS.toString() && (
+        <div>Successfully initiated bounty offer. Check tx status in your Ethereum provider.</div>
+      )}
       {status === TxStatus.FAILED.toString() && (
         <div>Denied transaction or otherwise encountered error.</div>
       )}

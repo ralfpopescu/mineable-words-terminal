@@ -25,6 +25,7 @@ export type MineProps = {
   workerCount?: number;
   minerId: string;
   bountyHunt: boolean;
+  dictionaryMode: boolean;
 };
 
 const Yellow = styled.span`
@@ -70,6 +71,7 @@ export const Mine = ({
   workerCount,
   minerId,
   bountyHunt,
+  dictionaryMode,
 }: MineProps) => {
   const { library, account } = useWeb3React<Web3Provider>();
   const [foundWords, setFoundWords] = useState<FoundWord[]>([]);
@@ -143,6 +145,7 @@ export const Mine = ({
           updateHashRate: setHashRate,
           lookingFor: lookingForCoalesced,
           startingNonce: initialOffset,
+          dictionaryMode,
         });
 
         setMiningController(controller);
@@ -227,13 +230,16 @@ export const Mine = ({
         }
         {
           <div>
-            {allLookingFor ? (
+            {lookingFor ? (
               <>
-                <Yellow>Looking for words: </Yellow>
-                {allLookingFor?.join(", ")}
+                <Yellow>Looking for: </Yellow>
+                {lookingFor?.join(", ")}
               </>
             ) : (
-              <Yellow>Finding all words</Yellow>
+              <>
+                <Yellow>Looking for: </Yellow>
+                DICTIONARY WORDS
+              </>
             )}
           </div>
         }
