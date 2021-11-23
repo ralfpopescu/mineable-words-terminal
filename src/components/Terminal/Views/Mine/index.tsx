@@ -238,7 +238,7 @@ export const Mine = ({
             ) : (
               <>
                 <Yellow>Looking for: </Yellow>
-                DICTIONARY WORDS
+                DICTIONARY WORDS 6+ LETTERS
               </>
             )}
           </div>

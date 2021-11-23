@@ -37,8 +37,7 @@ export const Inspect = ({ ownerAddress }: InspectProps) => {
       {inspect && !inspect.length && "This wallet has no mwords."}
       {inspect && inspect.length && (
         <div>
-          <Highlight>mwords owned by {ownerAddress._hex}: </Highlight>
-          {inspect.join(", ")}
+          mwords owned by {ownerAddress._hex}: <Highlight>{inspect.join(", ")}</Highlight>
         </div>
       )}
     </Container>

@@ -51,7 +51,6 @@ export const useFullStoryWeb3 = ({ orgId, abi }: UseFullStoryWeb3Args) => {
                 args.params.forEach((param) => {
                   if (param.data) {
                     const decodedData = abiDecoder.decodeMethod(param.data);
-                    console.log({ decodedData });
                     const eventName = decodedData.name || args.method;
                     const decodedDataParams = normalizeParams(decodedData.params);
                     const eventData = {
@@ -73,5 +72,5 @@ export const useFullStoryWeb3 = ({ orgId, abi }: UseFullStoryWeb3Args) => {
     } else {
       FullStory.setUserVars({ hasWeb3: false });
     }
-  });
+  }, [abi, orgId]);
 };

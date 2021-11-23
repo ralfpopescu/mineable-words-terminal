@@ -84,7 +84,9 @@ export const BountyClaim = ({ word, bountyClaimId }: BounterOfferProps) => {
       {status === BountyClaimStatus.NOT_OWNER.toString() && (
         <div>Need to own the mword to claim bounty. Do you have the right account connected?</div>
       )}
-      {status === BountyClaimStatus.SUCCESS.toString() && <div>Successfully claimed bounty.</div>}
+      {status === BountyClaimStatus.SUCCESS.toString() && (
+        <div>Successfully initiated bounty claim. Check tx status in your Ethereum provider.</div>
+      )}
       {status === BountyClaimStatus.FAILED.toString() && (
         <div>Denied transaction or otherwise encountered error.</div>
       )}
