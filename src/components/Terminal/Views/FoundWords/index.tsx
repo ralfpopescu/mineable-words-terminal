@@ -1,13 +1,6 @@
 import styled from "styled-components";
 import { Line } from "../../../Line";
 
-const Column = styled.div`
-  display: flex;
-  flex-direction: column;
-  max-height: 300px;
-  overflow-y: scroll;
-`;
-
 const GridContainer = styled.div`
   display: grid;
   grid-template-columns: 200px 200px;

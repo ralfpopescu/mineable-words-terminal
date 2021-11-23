@@ -247,7 +247,11 @@ export const commands = ({ account, location, navigate }: CommandsInput) =>
 
         if (!ethers.utils.isAddress(address)) return "Invalid address.";
 
-        return <Inspect ownerAddress={BigNumber.from(address)} />;
+        const inspectId = `inspectId-${generateNonce(12)}`;
+        const concat = concatQueryParams(location.search, `${inspectId}=0`);
+        navigate(concat);
+
+        return <Inspect ownerAddress={BigNumber.from(address)} inspectId={inspectId} />;
       },
       "bounty-claim": (input: string) => {
         if (!account)
