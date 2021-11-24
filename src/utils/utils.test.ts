@@ -41,7 +41,6 @@ test("uint88", () => {
 test("normalized word", () => {
   const hash = BigNumber.from("0xf45ca3e1b761bd570f32221b1cfd33979e20d68ca4442b8c4c125d6854e31a69");
   const normalized = normalizeWordHash(hash);
-  console.log({ normalized });
   expect(getWordFromHash(hash)).toBe(getWordFromHash(normalized));
 });
 

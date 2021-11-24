@@ -20,7 +20,6 @@ export const Inspect = ({ ownerAddress, inspectId }: InspectProps) => {
   const navigate = useNavigate();
   const queryParams = getQueryParamsFromSearch(location.search);
   const data = deserializeData<string[] | null>(queryParams[inspectId]);
-  console.log({ data, inspectId, queryParams });
   const [inspect, setInspect] = useState<string[] | null>(data);
 
   useEffect(() => {
@@ -28,7 +27,6 @@ export const Inspect = ({ ownerAddress, inspectId }: InspectProps) => {
       if (library && !inspect) {
         const mwords = await getMWordsByOwner({ library, ownerAddress });
         setInspect(mwords);
-        console.log({ mwords, serialized: serializeData<string[]>(mwords) });
         navigate(
           addQueryParamsToNavPath({ [inspectId]: serializeData<string[]>(mwords) }, location.search)
         );

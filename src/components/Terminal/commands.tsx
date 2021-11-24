@@ -167,7 +167,6 @@ export const commands = ({ account, location, navigate }: CommandsInput) =>
           .split(",")
           .map((w) => w.replace(/\s+/g, ""))
           .filter((w) => w !== "");
-        console.log({ input, words });
 
         const invalidCharacters = words.map((word) => getInvalidCharactersFromWord(word)).flat();
         if (invalidCharacters.length) return getInvalidCharactersMessage(invalidCharacters);

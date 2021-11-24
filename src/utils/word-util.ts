@@ -201,7 +201,6 @@ export const wordMapToHashMap = ({ wordMap }: WordMapToHashMapInput) => {
   });
   const filtered = processed.filter((hashed) => hashed._hex !== "");
   const reduced = filtered.reduce((acc, curr, i) => {
-    if (i % 50 === 0) console.log(i);
     acc[curr._hex] = true;
     return acc;
   }, {} as { [key: string]: true });
