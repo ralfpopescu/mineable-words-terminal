@@ -91,6 +91,7 @@ export const getAllBountiesOffered = async ({
 }: LibraryInput): Promise<ethers.BigNumber[]> => {
   const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, library);
   const bountiesOffered = await contract.queryFilter(contract.filters.BountyOffered(null));
+  console.log({ bountiesOffered });
   return bountiesOffered.map((b) => b.args.mword);
 };
 
@@ -119,6 +120,7 @@ export const getBountyFromMword = async ({
 }: getBountyFromMwordInput): Promise<BountyType> => {
   const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, library);
   const bounty = await contract.bounties(mword);
+  console.log({ bounty });
   return { ...bounty, mword, decoded: getWordFromHash(mword) };
 };
 
@@ -126,9 +128,13 @@ export const getCurrentBounties = async ({ library }: LibraryInput): Promise<Bou
   const offered = await getAllBountiesOffered({ library });
   const removed = await getAllBountiesRemoved({ library });
 
-  return Promise.all(
+  console.log({ offered });
+
+  const bounties = await Promise.all(
     offered
       .filter((o) => !removed.some((r) => r._hex === o._hex))
       .map((mword) => getBountyFromMword({ library, mword }))
   );
+
+  return bounties.filter((b) => !b.isClaimed);
 };
