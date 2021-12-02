@@ -89,7 +89,7 @@ function getClientEnvironment(publicUrl) {
         // It is defined here so it is available in the webpackHotDevClient.
         FAST_REFRESH: process.env.FAST_REFRESH !== "false",
         REACT_APP_HOST: process.env.REACT_APP_HOST || "http://localhost:3000", // LOCAL | ROPSTEN | MAINNET
-        REACT_APP_NETWORK: "ROPSTEN", // LOCAL | ROPSTEN | MAINNET
+        REACT_APP_NETWORK: "RINKEBY", // LOCAL | ROPSTEN | RINKEBY | MAINNET
         REACT_APP_MINEABLE_WORDS_ADDRESS_LOCAL:
           process.env.REACT_APP_MINEABLE_WORDS_ADDRESS ||
           "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
@@ -98,7 +98,7 @@ function getClientEnvironment(publicUrl) {
           "0xE9FbedeC2EAFc89c926Ded0BB7632ce221d7d2e6",
         REACT_APP_MINEABLE_WORDS_ADDRESS_RINKEBY:
           process.env.REACT_APP_MINEABLE_WORDS_ADDRESS_RINKEBY ||
-          "0xcEDeB38cA82663c946FcF8993403B9e8c1C0d43A",
+          "0x255c86030bb271592d2a5fea5294438B1FA1aCC4",
         REACT_APP_MINEABLE_WORDS_ADDRESS_MAINNET:
           process.env.REACT_APP_MINEABLE_WORDS_ADDRESS || "0x123",
         REACT_APP_LOCAL_URL: "http://localhost:8545",
