@@ -98,7 +98,7 @@ function getClientEnvironment(publicUrl) {
           "0xE9FbedeC2EAFc89c926Ded0BB7632ce221d7d2e6",
         REACT_APP_MINEABLE_WORDS_ADDRESS_RINKEBY:
           process.env.REACT_APP_MINEABLE_WORDS_ADDRESS_RINKEBY ||
-          "0x255c86030bb271592d2a5fea5294438B1FA1aCC4",
+          "0x0570a1cc443772c29045a9c5c4243AAC966E1be2",
         REACT_APP_MINEABLE_WORDS_ADDRESS_MAINNET:
           process.env.REACT_APP_MINEABLE_WORDS_ADDRESS || "0x123",
         REACT_APP_LOCAL_URL: "http://localhost:8545",
