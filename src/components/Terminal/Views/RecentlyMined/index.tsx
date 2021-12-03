@@ -7,6 +7,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { getQueryParamsFromSearch, addQueryParamsToNavPath } from "../../../../utils";
 import { serializeData, deserializeData } from "../../../../utils/data-utils";
 import { Ellipsis } from "../../../Ellipsis";
+import { Highlight } from "../../../Highlight";
 
 const Container = styled.div``;
 
@@ -43,7 +44,7 @@ export const RecentlyMined = ({ recentId }: RecentlyMinedProps) => {
         </>
       )}
       {recentlyMined && !recentlyMined.length && "No mwords yet."}
-      {recentlyMined && recentlyMined.length && recentlyMined.join(", ")}
+      <Highlight>{recentlyMined && recentlyMined.length && recentlyMined.join(", ")}</Highlight>
     </Container>
   );
 };

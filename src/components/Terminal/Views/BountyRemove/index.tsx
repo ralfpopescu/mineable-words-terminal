@@ -60,7 +60,10 @@ export const BountyRemove = ({ word, bountyRemoveId }: BountyRemoveProps) => {
         </div>
       )}
       {status === TxStatus.FAILED.toString() && (
-        <div>Denied transaction or otherwise encountered error.</div>
+        <div>
+          Denied transaction or otherwise encountered error. Removal must first be iniitiated and
+          100 blocks must pass since initiation.
+        </div>
       )}
     </div>
   );

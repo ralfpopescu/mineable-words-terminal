@@ -88,7 +88,10 @@ export const BountyClaim = ({ word, bountyClaimId }: BounterOfferProps) => {
         <div>Successfully initiated bounty claim. Check tx status in your Ethereum provider.</div>
       )}
       {status === BountyClaimStatus.FAILED.toString() && (
-        <div>Denied transaction or otherwise encountered error.</div>
+        <div>
+          Denied transaction or otherwise encountered error. Have you minted the bounty word you are
+          trying to claim? Mint first, then claim.
+        </div>
       )}
     </div>
   );

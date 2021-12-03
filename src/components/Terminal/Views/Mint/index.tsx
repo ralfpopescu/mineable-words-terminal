@@ -77,7 +77,10 @@ export const Mint = ({ nonce, mintId }: MintProps) => {
         <div>Successfully initiated mint. Check tx status in your Ethereum provider.</div>
       )}
       {status === TxStatus.FAILED.toString() && (
-        <div>Denied transaction or otherwise encountered error.</div>
+        <div>
+          Denied transaction or otherwise encountered error. Check your browser console or Ethereum
+          provider for more details.
+        </div>
       )}
     </div>
   );

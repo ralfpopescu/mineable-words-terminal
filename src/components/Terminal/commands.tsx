@@ -12,6 +12,7 @@ import {
   Help,
   Info,
   Inspect,
+  Limits,
   Links,
   Mine,
   Mint,
@@ -82,13 +83,14 @@ export const commands = ({ account, location, navigate }: CommandsInput) =>
         return <RecentlyMined recentId={recentId} />;
       },
       links: () => <Links />,
+      limits: () => <Limits />,
       info: () => <Info />,
       calc: (input: string) => {
         const options = getOptions<{ h?: string; l?: string }>(input);
         const invalidOptions = assertValidOptions(options, ["h", "l"]);
         if (invalidOptions) return invalidOptions;
 
-        const hashRate = parseInt(options.h || "");
+        const hashRate = parseFloat(options.h || "");
         const lengthOfWord = parseInt(options.l || "");
 
         if ((options.h && !hashRate) || (options.l && !lengthOfWord))
