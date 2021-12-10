@@ -43,7 +43,7 @@ export const FAQ = () => (
     <span>Yes, there is a cap depending on the word length. Use command "limits" to see.</span>
     <Line />
     <Question>Is there a fee?</Question>
-    <span>Minting an mword cost .009 ETH. However, if you own an mpunk, minting is free!</span>
+    <span>Minting an mword cost .02 ETH. However, if you own an mpunk, minting is free!</span>
     <Line />
   </Column>
 );

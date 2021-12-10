@@ -9,6 +9,7 @@ export enum TxStatus {
   INITIATED,
   SUCCESS,
   FAILED,
+  ATTEMPTING,
 }
 
 export enum BountyClaimStatus {

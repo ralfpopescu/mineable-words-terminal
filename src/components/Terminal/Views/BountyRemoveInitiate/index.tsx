@@ -16,6 +16,7 @@ export const attemptBountyRemoveInitiate = async function (
   const contract = MineableWords__factory.connect(MINEABLEWORDS_ADDR, lib);
   try {
     const signer = lib.getSigner();
+    console.log("attempt");
     const tx = await contract.connect(signer).initiateBountyRemoval(encodedWord);
     return tx.hash;
   } catch (e: any) {
@@ -38,10 +39,18 @@ export const BountyRemoveInitiate = ({
   const status = queryParams[bountyRemoveInitiateId] || TxStatus.FAILED;
   const encodedWord = getHashFromWord(word);
 
+  console.log({ bountyRemoveInitiateId });
+
   useEffect(() => {
     const withdraw = async () => {
       if (account && status === TxStatus.INITIATED.toString()) {
         try {
+          navigate(
+            addQueryParamsToNavPath(
+              { [bountyRemoveInitiateId]: TxStatus.ATTEMPTING },
+              location.search
+            )
+          );
           await attemptBountyRemoveInitiate(library!, encodedWord);
           navigate(
             addQueryParamsToNavPath({ [bountyRemoveInitiateId]: TxStatus.SUCCESS }, location.search)
@@ -57,7 +66,7 @@ export const BountyRemoveInitiate = ({
   }, [account, library, status, bountyRemoveInitiateId, encodedWord, location, navigate]);
 
   return (
-    <div>
+    <div key={bountyRemoveInitiateId}>
       Initiating bounty remove on {word}...
       {status === TxStatus.SUCCESS.toString() && (
         <div>

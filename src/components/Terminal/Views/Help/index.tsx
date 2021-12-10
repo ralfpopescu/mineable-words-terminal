@@ -9,8 +9,8 @@ export const Help = () => (
       simply be claimed - they must be mined! Any piece of text up to length 16 with letters a-z and
       characters @ ! . _ & ? can be found. You can either mine them yourself right here in the
       browser, or offer a bounty for others to find them for you. Conversely, you can earn rewards
-      for finding other people’s bounties. Minting costs .009 ETH, but is free if your wallet owns
-      an mpunk <a href="https://www.mpunks.org/faq">(mpunks.org)</a>. Here are a list of commands to
+      for finding other people’s bounties. Minting costs .02 ETH, but is free if your wallet owns an
+      mpunk <a href="https://www.mpunks.org/faq">(mpunks.org)</a>. Here are a list of commands to
       get you started:
     </div>
     <br />

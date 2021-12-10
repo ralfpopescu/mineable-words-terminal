@@ -28,7 +28,7 @@ export const attemptMint = async function (
       ownerAddress: ethers.BigNumber.from(account),
     });
 
-    const value = ownsMpunk ? 0 : 9000000000000000;
+    const value = ownsMpunk ? 0 : ethers.utils.parseEther("0.02");
 
     const tx = await contract.connect(signer).mint(nonce.toHexString(), {
       value,

@@ -8,6 +8,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { getQueryParamsFromSearch, addQueryParamsToNavPath } from "../../../../utils";
 import { TxStatus } from "../../../../utils/statuses";
 import { MINEABLEWORDS_ADDR } from "../../../../web3-util/config";
+import { Highlight } from "../../../Highlight";
 
 const scaleOffer = (offer: number, decimalPlaces: number) =>
   Math.floor(offer * 10 ** decimalPlaces);
@@ -75,8 +76,8 @@ export const BountyOffer = ({ word, offer, bountyOfferId }: BounterOfferProps) =
 
   return (
     <div>
-      Offering bounty of {offer} for mword {word}
-      {nonce && ` -- ${nonce}`}...
+      Offering bounty of {offer} for mword <Highlight>{word}</Highlight>
+      {nonce && ` -- ${nonce._hex}`}...
       <div>
         Caution: if you want to retrieve your bounty funds, there will be a 100 blocks delay where
         your bounty can still be claimed.
