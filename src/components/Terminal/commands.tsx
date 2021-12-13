@@ -200,6 +200,8 @@ export const commands = ({ account, location, navigate }: CommandsInput) =>
 
         try {
           nonce = BigNumber.from(entry);
+          //remove if we think it makes sense
+          if (nonce) return "Nonce minting currently disabled to prevent erroneous minting.";
         } catch (e) {
           const foundStorage = localStorage.getItem("found");
           if (foundStorage) {
