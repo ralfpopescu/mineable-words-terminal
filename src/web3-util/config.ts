@@ -26,7 +26,7 @@ export const chainUrls: { [key in keyof Networks]: string } = {
 export const contractAddresses: Networks = {
   LOCAL: process.env.REACT_APP_MINEABLE_WORDS_ADDRESS_LOCAL,
   ROPSTEN: process.env.REACT_APP_MINEABLE_WORDS_ADDRESS_ROPSTEN,
-  MAINNET: process.env.REACT_APP_MINEABLE_WORDS_ADDRESS_MAIN,
+  MAINNET: process.env.REACT_APP_MINEABLE_WORDS_ADDRESS_MAINNET,
   RINKEBY: process.env.REACT_APP_MINEABLE_WORDS_ADDRESS_RINKEBY,
 };
 

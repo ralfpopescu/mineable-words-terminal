@@ -89,9 +89,9 @@ function getClientEnvironment(publicUrl) {
         // It is defined here so it is available in the webpackHotDevClient.
         FAST_REFRESH: process.env.FAST_REFRESH !== "false",
         REACT_APP_HOST: process.env.REACT_APP_HOST || "http://localhost:3000", // LOCAL | ROPSTEN | MAINNET
-        REACT_APP_NETWORK: "RINKEBY", // LOCAL | ROPSTEN | RINKEBY | MAINNET
+        REACT_APP_NETWORK: "MAINNET", // LOCAL | ROPSTEN | RINKEBY | MAINNET
         REACT_APP_MINEABLE_WORDS_ADDRESS_LOCAL:
-          process.env.REACT_APP_MINEABLE_WORDS_ADDRESS ||
+          process.env.REACT_APP_MINEABLE_WORDS_ADDRESS_LOCAL ||
           "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
         REACT_APP_MINEABLE_WORDS_ADDRESS_ROPSTEN:
           process.env.REACT_APP_MINEABLE_WORDS_ADDRESS_ROPSTEN ||
@@ -100,7 +100,8 @@ function getClientEnvironment(publicUrl) {
           process.env.REACT_APP_MINEABLE_WORDS_ADDRESS_RINKEBY ||
           "0x0570a1cc443772c29045a9c5c4243AAC966E1be2",
         REACT_APP_MINEABLE_WORDS_ADDRESS_MAINNET:
-          process.env.REACT_APP_MINEABLE_WORDS_ADDRESS || "0x123",
+          process.env.REACT_APP_MINEABLE_WORDS_ADDRESS_MAINNET ||
+          "0x05fe017770d0ca164736537177e1d571d16bbade",
         REACT_APP_LOCAL_URL: "http://localhost:8545",
         REACT_APP_ROPSTEN_URL: "https://ropsten.infura.io/v3/d37e4dbaecf44046817af6c860a500bf",
         REACT_APP_RINKEBY_URL:
