@@ -10,8 +10,9 @@ export const Help = () => (
       characters @ ! . _ & ? can be found. You can either mine them yourself right here in the
       browser, or offer a bounty for others to find them for you. Conversely, you can earn rewards
       for finding other people’s bounties. Minting costs .02 ETH, but is free if your wallet owns an
-      mpunk <a href="https://www.mpunks.org/faq">(mpunks.org)</a>. Here are a list of commands to
-      get you started:
+      mpunk <a href="https://www.mpunks.org/faq">(mpunks.org)</a>. Disclaimer: this is an
+      experimental project - use these features with diligence and at your own risk! Here are a list
+      of commands to get you started:
     </div>
     <br />
     <Command>clear</Command>
