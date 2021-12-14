@@ -106,7 +106,8 @@ function getClientEnvironment(publicUrl) {
         REACT_APP_ROPSTEN_URL: "https://ropsten.infura.io/v3/d37e4dbaecf44046817af6c860a500bf",
         REACT_APP_RINKEBY_URL:
           "https://eth-rinkeby.alchemyapi.io/v2/5CWm_FjVnQUsRbiSl14P9QIy4G6T_kzL",
-        REACT_APP_MAINNET_URL: "https://mainnet.infura.io/v3/d37e4dbaecf44046817af6c860a500bf",
+        REACT_APP_MAINNET_URL:
+          "https://eth-mainnet.alchemyapi.io/v2/VoDle-D9g1R0drH4fKa265yoL7UzgsqL",
       }
     );
   // Stringify all values so we can feed into webpack DefinePlugin
