@@ -55,12 +55,9 @@ export const Help = () => (
       sessions.
     </span>
     <Line />
-    <Command>mint [nonce | word]</Command>
-    <span>
-      Mints an mword given some nonce, or word if you have found it via the browser miner.
-    </span>
+    <Command>mint [word]</Command>
+    <span>Mint a word after you have found it via the browser miner.</span>
     <br />
-    <span>*** example: mint 0x7482eb</span>
     <span>*** example: mint cool_word</span>
   </div>
 );
