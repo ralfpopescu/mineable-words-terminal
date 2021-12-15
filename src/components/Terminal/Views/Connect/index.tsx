@@ -36,11 +36,11 @@ export const Connect = ({ connectId, mpunkOwnerId }: ConnectProps) => {
   }, [account, status, activate, connectId, location, navigate, connectionStatus]);
 
   useEffect(() => {
-    if (error && !ConnectionStatus.INITIATED.toString()) {
+    if (error && connectionStatus !== ConnectionStatus.FAILED.toString()) {
       console.log({ error });
       navigate(addQueryParamsToNavPath({ [connectId]: ConnectionStatus.FAILED }, location.search));
     }
-  });
+  }, [connectId, error, location, navigate, connectionStatus]);
 
   return (
     <GridContainer>
