@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { MINEABLEWORDS_ADDR, network } from "../../../../web3-util/config";
 import { MPunkOwnershipStatus } from "./MpunkOwnership";
-import { serializeData, deserializeData } from "../../../../utils/data-utils";
 import { getQueryParamsFromSearch, addQueryParamsToNavPath } from "../../../../utils";
 import { ConnectionStatus } from "../../../../utils/statuses";
 
