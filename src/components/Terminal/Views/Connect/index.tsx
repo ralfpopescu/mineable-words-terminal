@@ -58,7 +58,6 @@ export const Connect = ({ connectId, mpunkOwnerId }: ConnectProps) => {
         </>
       ) : (
         <div>
-          {connectionStatus}
           Could not connect to web3. Do you have an Ethereum provider? Recommended:{" "}
           <a href="https://metamask.io/">Metamask</a>{" "}
         </div>
