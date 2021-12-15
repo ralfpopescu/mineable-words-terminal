@@ -8,14 +8,14 @@ import { serializeData, deserializeData } from "../../../../../utils/data-utils"
 import { isMPunkOwner } from "../../../../../web3-util/methods";
 import { Ellipsis } from "../../../../Ellipsis";
 
-type ConnectProps = { connectId: string };
+type MPunkOwnershipStatusProps = { mpunkOwnerId: string };
 
-export const MPunkOwnershipStatus = ({ connectId }: ConnectProps) => {
+export const MPunkOwnershipStatus = ({ mpunkOwnerId }: MPunkOwnershipStatusProps) => {
   const { library, account } = useWeb3React<Web3Provider>();
   const location = useLocation();
   const navigate = useNavigate();
   const queryParams = getQueryParamsFromSearch(location.search);
-  const data = deserializeData<boolean | null>(queryParams[connectId]);
+  const data = deserializeData<boolean | null>(queryParams[mpunkOwnerId]);
   const [isOwner, setIsOwner] = useState<boolean | null>(data);
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export const MPunkOwnershipStatus = ({ connectId }: ConnectProps) => {
         setIsOwner(isMpunkOwner);
         navigate(
           addQueryParamsToNavPath(
-            { [connectId]: serializeData<boolean>(isMpunkOwner) },
+            { [mpunkOwnerId]: serializeData<boolean>(isMpunkOwner) },
             location.search
           )
         );
@@ -36,7 +36,7 @@ export const MPunkOwnershipStatus = ({ connectId }: ConnectProps) => {
     };
 
     getStatus();
-  }, [library, isOwner, account, connectId, location, navigate]);
+  }, [library, isOwner, account, mpunkOwnerId, location, navigate]);
 
   return (
     <>

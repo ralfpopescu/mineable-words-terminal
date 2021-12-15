@@ -18,3 +18,10 @@ export enum BountyClaimStatus {
   FAILED,
   NOT_OWNER,
 }
+
+export enum ConnectionStatus {
+  INITIATED,
+  SUCCESS,
+  FAILED,
+  CONNECTING,
+}

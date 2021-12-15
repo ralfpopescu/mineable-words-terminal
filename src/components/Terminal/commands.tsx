@@ -100,10 +100,12 @@ export const commands = ({ account, location, navigate }: CommandsInput) =>
       },
       connect: async () => {
         const connectId = `connectId-${generateNonce(12)}`;
-        const concat = concatQueryParams(location.search, `${connectId}=0`);
+        const mpunkOwnerId = `mpunkOwnerId-${generateNonce(12)}`;
+
+        const concat = concatQueryParams(location.search, `${connectId}=0&${mpunkOwnerId}=0`);
         navigate(concat);
 
-        return <Connect connectId={connectId} />;
+        return <Connect connectId={connectId} mpunkOwnerId={mpunkOwnerId} />;
       },
       stop: getStop(location, navigate),
       "mine-advanced": async (input: string) => {
