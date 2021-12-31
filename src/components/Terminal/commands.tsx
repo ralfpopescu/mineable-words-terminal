@@ -1,4 +1,5 @@
 import {
+  Adlib,
   Bounties,
   BountyClaim,
   BountyHelp,
@@ -67,6 +68,7 @@ const getStop = (location: Location, navigate: NavigateFunction) => () => {
 export const commands = ({ account, location, navigate }: CommandsInput) =>
   wrapInErrorWrapper(
     {
+      adlib: () => <Adlib />,
       help: () => <Help />,
       faq: () => <FAQ />,
       "bounty-help": () => <BountyHelp />,
